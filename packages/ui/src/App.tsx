@@ -1,4 +1,4 @@
-import { EditorLayout } from './components/layout/editor-layout'
+import { EditorLayout } from './app/layout/editor-layout'
 
 export const App = () => {
   return <EditorLayout />

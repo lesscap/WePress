@@ -1,7 +1,7 @@
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
-import { PreviewPanel } from './preview-panel'
-import { EditPanel } from './edit-panel'
-import { ChatPanel } from './chat-panel'
+import { PreviewPanel } from '../preview-panel'
+import { EditPanel } from '../edit-panel'
+import { ChatPanel } from '../chat-panel'
 
 export function EditorLayout() {
   return (
