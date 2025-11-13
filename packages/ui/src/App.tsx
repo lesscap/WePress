@@ -1,8 +1,5 @@
+import { EditorLayout } from './components/layout/editor-layout'
+
 export const App = () => {
-  return (
-    <div>
-      <h1>WePress</h1>
-      <p>Welcome to WePress</p>
-    </div>
-  )
+  return <EditorLayout />
 }
