@@ -1,0 +1,19 @@
+{
+  "name": "wepress",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "pnpm --filter \"./packages/*\" dev",
+    "build": "pnpm --filter \"./packages/*\" build",
+    "test": "pnpm --filter \"./packages/*\" test",
+    "typecheck": "pnpm --filter \"./packages/*\" typecheck",
+    "lint": "pnpm --filter \"./packages/*\" lint"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.2"
+  }
+}
