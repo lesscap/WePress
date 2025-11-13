@@ -8,7 +8,7 @@ export function EditorLayout() {
     <div className="flex h-full flex-col">
       {/* Header */}
       <header className="flex h-14 items-center border-b border-gray-200 px-6">
-        <h1 className="text-lg font-semibold">WePress - 公众号秒排</h1>
+        <h1 className="text-lg font-semibold">WePress</h1>
       </header>
 
       {/* Three Column Layout */}

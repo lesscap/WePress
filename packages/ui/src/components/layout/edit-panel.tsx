@@ -1,10 +1,6 @@
 export function EditPanel() {
   return (
     <div className="flex h-full flex-col bg-white">
-      {/* Panel Header */}
-      <div className="border-b border-gray-200 px-4 py-3">
-        <h2 className="font-medium text-gray-900">结构化编辑</h2>
-      </div>
 
       {/* Sections List */}
       <div className="flex-1 overflow-y-auto p-4">

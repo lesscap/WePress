@@ -1,4 +1,9 @@
+import { ChevronDown, ChevronUp } from 'lucide-react'
+import { useState } from 'react'
+
 export function PreviewPanel() {
+  const [isTemplateSelectorOpen, setIsTemplateSelectorOpen] = useState(true)
+
   return (
     <div className="flex h-full flex-col bg-gray-50">
       {/* Mobile Preview Container */}
@@ -30,27 +35,90 @@ export function PreviewPanel() {
 
       {/* Template Selector */}
       <div className="border-t border-gray-200 bg-white p-4">
-        <div className="text-xs font-medium text-gray-500 mb-2">选择模板</div>
-        <div className="flex gap-2">
+        <div className="flex items-center justify-between mb-3">
+          <div className="text-xs font-medium text-gray-500">选择模板</div>
           <button
             type="button"
-            className="flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm hover:bg-gray-50"
+            onClick={() => setIsTemplateSelectorOpen(!isTemplateSelectorOpen)}
+            className="text-gray-500 hover:text-gray-700"
           >
-            简约风
-          </button>
-          <button
-            type="button"
-            className="flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm hover:bg-gray-50"
-          >
-            科技风
-          </button>
-          <button
-            type="button"
-            className="flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm hover:bg-gray-50"
-          >
-            文艺风
+            {isTemplateSelectorOpen ? (
+              <ChevronUp className="h-4 w-4" />
+            ) : (
+              <ChevronDown className="h-4 w-4" />
+            )}
           </button>
         </div>
+        {isTemplateSelectorOpen && (
+          <>
+            <div className="grid grid-cols-5 gap-2 mb-3">
+              <button
+                type="button"
+                className="w-full rounded-lg border border-gray-300 bg-white hover:bg-gray-50 overflow-hidden"
+              >
+                <div className="h-20 bg-gray-100 flex items-center justify-center">
+                  <span className="text-xs text-gray-400">缩略图</span>
+                </div>
+                <div className="py-1.5 text-xs text-center">简约风</div>
+              </button>
+              <button
+                type="button"
+                className="w-full rounded-lg border border-gray-300 bg-white hover:bg-gray-50 overflow-hidden"
+              >
+                <div className="h-20 bg-gray-100 flex items-center justify-center">
+                  <span className="text-xs text-gray-400">缩略图</span>
+                </div>
+                <div className="py-1.5 text-xs text-center">科技风</div>
+              </button>
+              <button
+                type="button"
+                className="w-full rounded-lg border border-gray-300 bg-white hover:bg-gray-50 overflow-hidden"
+              >
+                <div className="h-20 bg-gray-100 flex items-center justify-center">
+                  <span className="text-xs text-gray-400">缩略图</span>
+                </div>
+                <div className="py-1.5 text-xs text-center">文艺风</div>
+              </button>
+              <button
+                type="button"
+                className="w-full rounded-lg border border-gray-300 bg-white hover:bg-gray-50 overflow-hidden"
+              >
+                <div className="h-20 bg-gray-100 flex items-center justify-center">
+                  <span className="text-xs text-gray-400">缩略图</span>
+                </div>
+                <div className="py-1.5 text-xs text-center">商务风</div>
+              </button>
+              <button
+                type="button"
+                className="w-full rounded-lg border border-gray-300 bg-white hover:bg-gray-50 overflow-hidden"
+              >
+                <div className="h-20 bg-gray-100 flex items-center justify-center">
+                  <span className="text-xs text-gray-400">缩略图</span>
+                </div>
+                <div className="py-1.5 text-xs text-center">清新风</div>
+              </button>
+            </div>
+            <div className="flex justify-end">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  className="px-2 py-1 text-xs text-gray-500 hover:text-gray-700 disabled:opacity-50"
+                  disabled
+                >
+                  上一页
+                </button>
+                <span className="text-xs text-gray-500">1/1</span>
+                <button
+                  type="button"
+                  className="px-2 py-1 text-xs text-gray-500 hover:text-gray-700 disabled:opacity-50"
+                  disabled
+                >
+                  下一页
+                </button>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   )
