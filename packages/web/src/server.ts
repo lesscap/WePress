@@ -33,7 +33,7 @@ export const createServer = async () => {
   await server.register(ServicePlugin)
   await server.register(Router, { routes: Routes })
 
-  server.get('/health', async () => {
+  server.get('/api/health', async () => {
     return { status: 'ok' }
   })
 

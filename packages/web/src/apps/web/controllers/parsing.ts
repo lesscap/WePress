@@ -37,8 +37,8 @@ const SYSTEM_PROMPT = `你是一个专业的文章结构化助手。将用户文
 
 **重要：只返回 JSON，不要包含任何其他文字或解释。**`
 
-export const ArticleController = (app: FastifyInstance) => {
-  app.post<{ Body: ParseArticleBody }>('/parse', { schema: ParseArticleSchema }, async (request, reply) => {
+export const ParsingController = (app: FastifyInstance) => {
+  app.post<{ Body: ParseArticleBody }>('/articles', { schema: ParseArticleSchema }, async (request, reply) => {
     const { content } = request.body
 
     try {

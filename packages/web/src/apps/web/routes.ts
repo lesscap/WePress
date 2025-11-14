@@ -1,5 +1,5 @@
-import { ArticleController } from './controllers/article.js'
+import { ParsingController } from './controllers/parsing.js'
 
 export const Routes = {
-  '/api/articles': ArticleController,
+  '/api/parsing': ParsingController,
 }
