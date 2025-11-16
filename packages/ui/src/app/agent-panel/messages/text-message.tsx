@@ -19,7 +19,7 @@ export function TextMessage({ messages }: TextMessageProps) {
 
     // Wrap tool_call tags in code blocks for markdown rendering
     const displayText = fullText.replace(toolCallRegex, match => {
-      return `\`\`\`\n${match}\n\`\`\``
+      return `\n\`\`\`xml\n${match}\n\`\`\`\n`
     })
 
     // Check if text only contains tool_call tags (no other content)
@@ -41,14 +41,14 @@ export function TextMessage({ messages }: TextMessageProps) {
       <div className="mb-3 px-3">
         <div className="flex items-start gap-2">
           <div className="text-sm font-medium text-gray-500 flex-shrink-0 mt-0.5">AI:</div>
-          <div className="flex-1 text-sm">
+          <div className="flex-1 min-w-0 text-sm">
             {isExpanded ? (
               <div className="cursor-pointer" onClick={() => setIsExpanded(false)}>
                 <Marked content={displayText} />
               </div>
             ) : (
               <div
-                className="text-gray-400 cursor-pointer hover:text-gray-600"
+                className="text-gray-400 cursor-pointer hover:text-gray-600 break-words"
                 onClick={() => setIsExpanded(true)}
               >
                 {preview}...
@@ -65,7 +65,7 @@ export function TextMessage({ messages }: TextMessageProps) {
     <div className="mb-3 px-3">
       <div className="flex items-start gap-2">
         <div className="text-sm font-medium text-gray-500 flex-shrink-0 mt-0.5">AI:</div>
-        <div className="flex-1 text-sm text-gray-700">
+        <div className="flex-1 min-w-0 text-sm text-gray-700">
           <Marked content={displayText} />
         </div>
       </div>

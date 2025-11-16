@@ -3,6 +3,7 @@ import { TextMessage } from './text-message'
 import { ToolCallMessage } from './tool-call-message'
 import { ToolResult } from './tool-result'
 import { ErrorMessage } from './error-message'
+import { UsageMessage } from './usage-message'
 
 type MessageListProps = {
   messages: AgentMessage[]
@@ -37,6 +38,10 @@ export function MessageList({ messages, toolResults, onToolResultUpdate }: Messa
           return <ErrorMessage key={msg.messageId} message={msg as AgentMessage & { type: 'error' }} />
         }
 
+        if (msg.type === 'usage') {
+          return <UsageMessage key={msg.messageId} message={msg as AgentMessage & { type: 'usage' }} />
+        }
+
         if (msg.type === 'abort') {
           return (
             <div key={msg.messageId} className="mb-3 mx-3">
@@ -47,8 +52,8 @@ export function MessageList({ messages, toolResults, onToolResultUpdate }: Messa
           )
         }
 
-        // todolist and usage are handled elsewhere
-        if (msg.type === 'todolist' || msg.type === 'usage') {
+        // todolist is handled elsewhere
+        if (msg.type === 'todolist') {
           return null
         }
 
