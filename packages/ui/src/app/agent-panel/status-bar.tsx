@@ -1,12 +1,18 @@
 import type { EditorSelection } from '@/types/editor'
 
+type TokenUsage = {
+  inputTokens: number
+  outputTokens: number
+  totalTokens: number
+}
+
 type StatusBarProps = {
   selection: EditorSelection
-  totalTokens: number
+  usage: TokenUsage
   isActive: boolean
 }
 
-export function StatusBar({ selection, totalTokens, isActive }: StatusBarProps) {
+export function StatusBar({ selection, usage, isActive }: StatusBarProps) {
   const displayMap = {
     none: { icon: '📄', text: '全文' },
     section: {
@@ -23,7 +29,7 @@ export function StatusBar({ selection, totalTokens, isActive }: StatusBarProps) 
 
   const formatTokens = (tokens: number): string => {
     if (tokens >= 1000) {
-      return `${(tokens / 1000).toFixed(2)}K`
+      return `${(tokens / 1000).toFixed(1)}K`
     }
     return tokens.toString()
   }
@@ -36,7 +42,10 @@ export function StatusBar({ selection, totalTokens, isActive }: StatusBarProps) 
           <span>{text}</span>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-gray-500">💰 {formatTokens(totalTokens)}</span>
+          <span className="text-gray-500">
+            Token: ↑ {formatTokens(usage.inputTokens)} + ↓ {formatTokens(usage.outputTokens)} ={' '}
+            {formatTokens(usage.totalTokens)}
+          </span>
           <span className={isActive ? 'text-blue-600' : 'text-gray-400'}>{isActive ? '⚡ Active' : '⚡ Idle'}</span>
         </div>
       </div>

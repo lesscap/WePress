@@ -9,11 +9,22 @@ type TaskCardProps = {
   task: Task
 }
 
+const formatTokens = (count?: number): string => {
+  if (!count) return '0'
+  if (count >= 1000) {
+    return `${(count / 1000).toFixed(1)}K`
+  }
+  return count.toString()
+}
+
 export function TaskCard({ task }: TaskCardProps) {
   const status = getStatus(task)
   const agentConfig = getAgentConfig(task)
   const scopeDisplay = getScopeDisplay(task)
   const timestamp = getTimestamp(task)
+
+  // Detail section is expanded for running tasks, collapsed for completed
+  const [isDetailExpanded, setIsDetailExpanded] = useState(status === 'running')
 
   // Maintain tool results mapping
   const [toolResults, setToolResults] = useState<Record<string, AgentMessage & { type: 'tool_result' }>>({})
@@ -33,6 +44,7 @@ export function TaskCard({ task }: TaskCardProps) {
   }
 
   const config = statusConfig[status]
+  const hasMessages = task.messages.some(m => m.type === 'text')
 
   return (
     <div className="mx-3 mb-3 border-b border-gray-200 pb-3 last:border-b-0">
@@ -47,11 +59,35 @@ export function TaskCard({ task }: TaskCardProps) {
         </div>
       </div>
 
-      {/* Messages */}
-      <MessageList messages={task.messages} toolResults={toolResults} onToolResultUpdate={handleToolResultUpdate} />
+      {/* Detail Section - Collapsible */}
+      {hasMessages && (
+        <div className="mb-2">
+          <button
+            onClick={() => setIsDetailExpanded(!isDetailExpanded)}
+            className="w-full flex items-center justify-between text-xs font-medium text-gray-700 mb-1.5 hover:text-blue-600 transition-colors"
+          >
+            <span>💬 详情：</span>
+            <span className="text-blue-600">{isDetailExpanded ? '收起 ▲' : '展开 ▼'}</span>
+          </button>
+
+          {isDetailExpanded && (
+            <div className="rounded-lg border border-gray-200 bg-gray-50 p-3">
+              <MessageList messages={task.messages} toolResults={toolResults} onToolResultUpdate={handleToolResultUpdate} />
+            </div>
+          )}
+        </div>
+      )}
 
       {/* TodoList */}
       {task.todoList && <TodoListPanel todoList={task.todoList} />}
+
+      {/* Token Usage */}
+      {task.usage && (
+        <div className="mt-2 text-xs text-gray-500">
+          Token: ↑ {formatTokens(task.usage.inputTokens)} + ↓ {formatTokens(task.usage.outputTokens)} ={' '}
+          {formatTokens(task.usage.totalTokens)}
+        </div>
+      )}
     </div>
   )
 }

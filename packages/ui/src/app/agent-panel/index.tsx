@@ -127,8 +127,17 @@ export function AgentPanel({ selection }: AgentPanelProps) {
               // New text message
               updated.messages = [...prev.messages, message]
             }
+          } else if (message.type === 'usage') {
+            // Accumulate usage tokens
+            updated.messages = [...prev.messages, message]
+            const currentUsage = updated.usage || { inputTokens: 0, outputTokens: 0, totalTokens: 0 }
+            updated.usage = {
+              inputTokens: currentUsage.inputTokens + (message.content.promptTokens || 0),
+              outputTokens: currentUsage.outputTokens + (message.content.completionTokens || 0),
+              totalTokens: currentUsage.totalTokens + (message.content.totalTokens || 0),
+            }
           } else {
-            // For other message types (tool_call, tool_result, usage, etc.), just append
+            // For other message types (tool_call, tool_result, etc.), just append
             updated.messages = [...prev.messages, message]
           }
 
@@ -141,20 +150,13 @@ export function AgentPanel({ selection }: AgentPanelProps) {
         })
       }
 
-      // Stream ended, get final result and update usage
-      const result = await query.getResult()
+      // Stream ended, mark task as complete
+      await query.getResult()
       updateCurrentTask(prev => {
         if (!prev) return null
         return {
           ...prev,
           endTime: Date.now(),
-          usage: result?.usage
-            ? {
-                inputTokens: result.usage.inputTokens || 0,
-                outputTokens: result.usage.outputTokens || 0,
-                totalTokens: result.usage.totalTokens || 0,
-              }
-            : undefined,
         }
       })
     } catch (error) {
@@ -194,7 +196,14 @@ export function AgentPanel({ selection }: AgentPanelProps) {
       {/* Status Bar (Fixed, Bottom) */}
       <StatusBar
         selection={selection}
-        totalTokens={allTasks.reduce((sum, t) => sum + (t.usage?.totalTokens || 0), 0)}
+        usage={allTasks.reduce(
+          (acc, t) => ({
+            inputTokens: acc.inputTokens + (t.usage?.inputTokens || 0),
+            outputTokens: acc.outputTokens + (t.usage?.outputTokens || 0),
+            totalTokens: acc.totalTokens + (t.usage?.totalTokens || 0),
+          }),
+          { inputTokens: 0, outputTokens: 0, totalTokens: 0 },
+        )}
         isActive={hasRunningTask}
       />
     </div>
