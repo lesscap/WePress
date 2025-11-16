@@ -1,5 +1,5 @@
 import { TaskCard } from './task-card'
-import type { Task } from '@/types/editor'
+import type { Task } from '@/types/task'
 
 type TaskHistoryProps = {
   tasks: Task[]

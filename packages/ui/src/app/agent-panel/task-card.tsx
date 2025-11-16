@@ -1,46 +1,59 @@
 import { useState, useEffect } from 'react'
-import type { Task } from '@/types/editor'
+import type { Task } from '@/types/task'
+import {
+  getStatus,
+  getAgentConfig,
+  getStreamingOutput,
+  getFinalText,
+  getToolCalls,
+  getScopeDisplay,
+  getTimestamp,
+} from './task-helpers'
 
 type TaskCardProps = {
   task: Task
 }
 
 export function TaskCard({ task }: TaskCardProps) {
-  const [isDetailExpanded, setIsDetailExpanded] = useState(task.status === 'running')
+  const status = getStatus(task)
+  const agentConfig = getAgentConfig(task)
+  const streamingOutput = getStreamingOutput(task)
+  const finalText = getFinalText(task)
+  const toolCalls = getToolCalls(task)
+  const scopeDisplay = getScopeDisplay(task)
+  const timestamp = getTimestamp(task)
+
+  const [isDetailExpanded, setIsDetailExpanded] = useState(status === 'running')
 
   // Auto expand detail when running, auto collapse when completed
   useEffect(() => {
-    if (task.status === 'running') {
+    if (status === 'running') {
       setIsDetailExpanded(true)
-    } else if (task.status === 'completed') {
+    } else if (status === 'completed') {
       setIsDetailExpanded(false)
     }
-  }, [task.status])
+  }, [status])
 
   const statusConfig = {
     completed: { icon: '✅', color: 'text-green-600' },
     running: { icon: '🔄', color: 'text-blue-600' },
     failed: { icon: '❌', color: 'text-red-600' },
     aborted: { icon: '⛔', color: 'text-gray-500' },
-    queued: { icon: '⏳', color: 'text-gray-500' },
-    waiting_input: { icon: '⏸️', color: 'text-yellow-600' }
   }
 
-  const config = statusConfig[task.status]
-  const hasDetail = task.streamingOutput || task.result
+  const config = statusConfig[status]
+  const hasDetail = streamingOutput || finalText
 
   return (
     <div className="mx-3 mb-3 border-b border-gray-200 pb-3 last:border-b-0">
       {/* Header - Always Visible */}
       <div className="mb-2">
         <div className="flex items-center gap-2">
-          <span className="text-base">{task.agentIcon}</span>
-          <span className="text-sm font-medium text-gray-900">{task.agentName}</span>
+          <span className="text-base">{agentConfig.icon}</span>
+          <span className="text-sm font-medium text-gray-900">{agentConfig.name}</span>
           <span className={`text-xs ${config.color}`}>{config.icon}</span>
-          <span className="text-xs text-gray-500">· {task.scopeDisplay}</span>
-          {task.timestamp && (
-            <span className="text-xs text-gray-400">· {task.timestamp}</span>
-          )}
+          <span className="text-xs text-gray-500">· {scopeDisplay}</span>
+          <span className="text-xs text-gray-400">· {timestamp}</span>
         </div>
       </div>
 
@@ -60,17 +73,17 @@ export function TaskCard({ task }: TaskCardProps) {
           {isDetailExpanded && (
             <div>
               {/* Streaming Output */}
-              {task.streamingOutput && (
+              {streamingOutput && (
                 <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 text-xs text-gray-700 whitespace-pre-wrap">
-                  {task.streamingOutput}
-                  {task.status === 'running' && <span className="animate-pulse">█</span>}
+                  {streamingOutput}
+                  {status === 'running' && <span className="animate-pulse">█</span>}
                 </div>
               )}
 
               {/* Result */}
-              {task.result && (
+              {finalText && (
                 <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 text-xs text-gray-600">
-                  {task.result}
+                  {finalText}
                 </div>
               )}
             </div>
@@ -79,11 +92,11 @@ export function TaskCard({ task }: TaskCardProps) {
       )}
 
       {/* Tool Calls - Always Visible with Simple Indent */}
-      {task.toolCalls.length > 0 && (
+      {toolCalls.length > 0 && (
         <div>
           <div className="text-xs font-medium text-gray-700 mb-1.5">执行步骤：</div>
           <div className="space-y-1 pl-4">
-            {task.toolCalls.map(tool => (
+            {toolCalls.map(tool => (
               <div key={tool.id} className="flex items-start gap-2 text-xs">
                 <span>
                   {tool.status === 'completed' && '✅'}

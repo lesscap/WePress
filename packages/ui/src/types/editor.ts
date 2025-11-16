@@ -1,4 +1,4 @@
-// Minimal type definitions for UI rendering
+// Type definitions for editor UI
 
 export type Section = {
   id: string
@@ -12,26 +12,7 @@ export type EditorSelection =
   | { type: 'section'; sectionIndex: number; sectionId: string; sectionTitle: string }
   | { type: 'text'; sectionIndex: number; sectionId: string; range: { start: number; end: number }; selectedText: string }
 
-export type TaskStatus = 'queued' | 'running' | 'waiting_input' | 'completed' | 'failed' | 'aborted'
-
-export type ToolCall = {
-  id: string
-  displayName: string
-  status: 'running' | 'completed' | 'failed'
-}
-
-export type Task = {
-  id: string
-  agentName: string
-  agentIcon: string
-  scopeDisplay: string  // e.g., "第2段：早期探索" or "全文"
-  status: TaskStatus
-  toolCalls: ToolCall[]
-  streamingOutput?: string  // streaming content during execution
-  result?: string
-  timestamp: string  // e.g., "5分钟前"
-}
-
+// Agent parameter types
 type AgentParamBase = {
   name: string
   label: string

@@ -2,12 +2,13 @@ import { TaskHistory } from './task-history'
 import { TaskQueue } from './task-queue'
 import { StatusBar } from './status-bar'
 import { InputArea } from './input-area'
+import { getStatus } from './task-helpers'
 import type { EditorSelection } from '@/types/editor'
 import {
   mockRunningTask,
   mockQueuedTasks,
   mockCompletedTasks
-} from '@/mocks/editor-data'
+} from '@/mocks/task-data'
 
 type AgentPanelProps = {
   selection: EditorSelection
@@ -18,7 +19,7 @@ export function AgentPanel({ selection }: AgentPanelProps) {
   const allTasks = [...mockCompletedTasks, mockRunningTask]
 
   // Check if there's a running task
-  const hasRunningTask = allTasks.some(t => t.status === 'running')
+  const hasRunningTask = allTasks.some(t => getStatus(t) === 'running')
 
   // Mock token count (in real app, this would come from state)
   const totalTokens = 1234

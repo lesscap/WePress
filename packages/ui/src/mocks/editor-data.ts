@@ -1,4 +1,4 @@
-import type { Section, Task, AgentDef } from '@/types/editor'
+import type { Section, AgentDef } from '@/types/editor'
 
 export const mockSections: Section[] = [
   {
@@ -205,77 +205,5 @@ export const mockTextLevelAgents: AgentDef[] = [
     icon: '🔄',
     description: '用不同方式表达',
     placeholder: '改写方向（可选）...'
-  }
-]
-
-export const mockRunningTask: Task = {
-  id: 'task-1',
-  agentName: '优化段落',
-  agentIcon: '✨',
-  scopeDisplay: '第3段：早期探索',
-  status: 'running',
-  toolCalls: [
-    { id: 'tool-1', displayName: '已获取文章结构', status: 'completed' },
-    { id: 'tool-2', displayName: '已阅读父级段落《历史背景》', status: 'completed' },
-    { id: 'tool-3', displayName: '正在生成优化内容...', status: 'running' }
-  ],
-  streamingOutput: `1950年代到1970年代，研究人员主要关注符号推理和专家系统。
-
-这一时期诞生了许多开创性的工作：
-- **LISP语言**（1958）：由约翰·麦卡锡发明，成为人工智能研究的首选编程语言
-- **ELIZA**（1964-1966）：第一个聊天机器人，由约瑟夫·魏岑鲍姆开发，模拟心理治疗师的对话
-- **专家系统**：基于规则的推理系统，在特定领域展现出专家级的问题解决能力
-
-然而，这一时期也面临着算力不足和数据匮乏的挑战，导致了第一次人工智能寒冬的到来。`,
-  timestamp: '刚刚'
-}
-
-export const mockQueuedTasks: Task[] = [
-  {
-    id: 'task-2',
-    agentName: '配图',
-    agentIcon: '🖼️',
-    scopeDisplay: '第3段：早期探索',
-    status: 'queued',
-    toolCalls: [],
-    timestamp: ''
-  },
-  {
-    id: 'task-3',
-    agentName: 'SEO优化',
-    agentIcon: '🔍',
-    scopeDisplay: '全文',
-    status: 'queued',
-    toolCalls: [],
-    timestamp: ''
-  }
-]
-
-export const mockCompletedTasks: Task[] = [
-  {
-    id: 'task-0',
-    agentName: '解析结构',
-    agentIcon: '📊',
-    scopeDisplay: '全文',
-    status: 'completed',
-    toolCalls: [
-      { id: 'tool-0-1', displayName: '已分析文章内容', status: 'completed' },
-      { id: 'tool-0-2', displayName: '已生成段落结构', status: 'completed' }
-    ],
-    result: '已成功解析文章为 5 个段落',
-    timestamp: '5分钟前'
-  },
-  {
-    id: 'task-00',
-    agentName: '调整语气',
-    agentIcon: '🎭',
-    scopeDisplay: '全文',
-    status: 'completed',
-    toolCalls: [
-      { id: 'tool-00-1', displayName: '已分析全文语气', status: 'completed' },
-      { id: 'tool-00-2', displayName: '已调整为专业风格', status: 'completed' }
-    ],
-    result: '已调整全文为专业风格',
-    timestamp: '3分钟前'
   }
 ]
