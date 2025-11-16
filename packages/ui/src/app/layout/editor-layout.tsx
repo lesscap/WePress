@@ -4,11 +4,10 @@ import { PreviewPanel } from '../preview-panel'
 import { ArticleEditor } from '../article-editor'
 import { AgentPanel } from '../agent-panel'
 import type { EditorSelection, Section } from '@/types/editor'
-import { mockSections } from '@/mocks/editor-data'
 
 export function EditorLayout() {
   const [selection, setSelection] = useState<EditorSelection>({ type: 'none' })
-  const [sections, setSections] = useState<Section[]>(mockSections)
+  const [sections, setSections] = useState<Section[]>([])
 
   return (
     <div className="flex h-full flex-col">
