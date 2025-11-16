@@ -6,7 +6,11 @@ type ParamFieldProps = {
   onChange: (name: string, value: string | number | boolean | string[]) => void
 }
 
-export function TagsField({ param, value, onChange }: ParamFieldProps & { param: Extract<AgentParam, { type: 'tags' }> }) {
+export function TagsField({
+  param,
+  value,
+  onChange,
+}: ParamFieldProps & { param: Extract<AgentParam, { type: 'tags' }> }) {
   const selectedTags = (value ?? param.defaultValue ?? []) as string[]
   return (
     <div className="mb-3">
@@ -42,7 +46,11 @@ export function TagsField({ param, value, onChange }: ParamFieldProps & { param:
   )
 }
 
-export function NumberField({ param, value, onChange }: ParamFieldProps & { param: Extract<AgentParam, { type: 'number' }> }) {
+export function NumberField({
+  param,
+  value,
+  onChange,
+}: ParamFieldProps & { param: Extract<AgentParam, { type: 'number' }> }) {
   const currentValue = value ?? param.defaultValue
   return (
     <div className="mb-3">
@@ -66,7 +74,11 @@ export function NumberField({ param, value, onChange }: ParamFieldProps & { para
   )
 }
 
-export function SliderField({ param, value, onChange }: ParamFieldProps & { param: Extract<AgentParam, { type: 'slider' }> }) {
+export function SliderField({
+  param,
+  value,
+  onChange,
+}: ParamFieldProps & { param: Extract<AgentParam, { type: 'slider' }> }) {
   const currentValue = value ?? param.defaultValue
   return (
     <div className="mb-3">
@@ -77,9 +89,7 @@ export function SliderField({ param, value, onChange }: ParamFieldProps & { para
           {param.unit}
         </span>
       </div>
-      {param.description && (
-        <div className="text-xs text-gray-500 mb-2">{param.description}</div>
-      )}
+      {param.description && <div className="text-xs text-gray-500 mb-2">{param.description}</div>}
       <input
         type="range"
         value={currentValue as number}

@@ -1,22 +1,19 @@
 import { useState, useRef, useEffect } from 'react'
 import { XCircle } from 'lucide-react'
 import type { AgentDef, EditorSelection } from '@/types/editor'
-import {
-  mockArticleLevelAgents,
-  mockSectionLevelAgents,
-  mockTextLevelAgents
-} from '@/mocks/editor-data'
+import type { TaskRequest } from '@/types/task'
+import { mockArticleLevelAgents, mockSectionLevelAgents, mockTextLevelAgents } from '@/mocks/editor-data'
 import { AgentMenu } from './agent-menu'
 import { ConfigForm } from './config-form'
 
 type InputAreaProps = {
   selection: EditorSelection
-  onExecuteAgent: (agentId: string) => void
+  onAddTaskRequest: (request: TaskRequest) => void
   onAbort?: () => void
   isRunning?: boolean
 }
 
-export function InputArea({ selection, onExecuteAgent, onAbort, isRunning }: InputAreaProps) {
+export function InputArea({ selection, onAddTaskRequest, onAbort, isRunning }: InputAreaProps) {
   const [selectedAgent, setSelectedAgent] = useState<AgentDef | null>(null)
   const [paramValues, setParamValues] = useState<Record<string, string | number | boolean | string[]>>({})
   const [additionalRequirements, setAdditionalRequirements] = useState('')
@@ -27,13 +24,13 @@ export function InputArea({ selection, onExecuteAgent, onAbort, isRunning }: Inp
   const agentsByScope = {
     none: mockArticleLevelAgents,
     section: mockSectionLevelAgents,
-    text: mockTextLevelAgents
+    text: mockTextLevelAgents,
   }
 
   const scopeDisplayMap = {
     none: '全文',
     section: selection.type === 'section' ? `第 ${selection.sectionIndex + 1} 段` : '',
-    text: '选中文本'
+    text: '选中文本',
   }
 
   const agents = agentsByScope[selection.type]
@@ -83,14 +80,17 @@ export function InputArea({ selection, onExecuteAgent, onAbort, isRunning }: Inp
   const handleConfirm = () => {
     if (!selectedAgent) return
 
-    // TODO: Pass params and requirements to the agent execution
-    console.log('Execute agent:', selectedAgent.id, {
+    // Create TaskRequest
+    const request: TaskRequest = {
+      id: `req-${Date.now()}`,
+      agentKey: selectedAgent.id,
+      scope: selection,
       params: paramValues,
-      additionalRequirements,
-      selection
-    })
+      instruction: additionalRequirements || undefined,
+      createdAt: Date.now(),
+    }
 
-    onExecuteAgent(selectedAgent.id)
+    onAddTaskRequest(request)
 
     // Reset state
     handleCancel()
@@ -122,11 +122,7 @@ export function InputArea({ selection, onExecuteAgent, onAbort, isRunning }: Inp
       {/* Agent Menu (Popover) */}
       {isMenuOpen && (
         <div ref={menuRef}>
-          <AgentMenu
-            agents={agents}
-            scopeDisplayText={scopeDisplayText}
-            onSelect={handleAgentClick}
-          />
+          <AgentMenu agents={agents} scopeDisplayText={scopeDisplayText} onSelect={handleAgentClick} />
         </div>
       )}
 

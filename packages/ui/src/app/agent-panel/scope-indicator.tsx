@@ -9,16 +9,12 @@ export function ScopeIndicator({ selection }: ScopeIndicatorProps) {
     none: { icon: '📄', text: '文章' },
     section: {
       icon: '📝',
-      text: selection.type === 'section'
-        ? `第 ${selection.sectionIndex + 1} 段：${selection.sectionTitle}`
-        : ''
+      text: selection.type === 'section' ? `第 ${selection.sectionIndex + 1} 段：${selection.sectionTitle}` : '',
     },
     text: {
       icon: '✏️',
-      text: selection.type === 'text'
-        ? `"${selection.selectedText}"`
-        : ''
-    }
+      text: selection.type === 'text' ? `"${selection.selectedText}"` : '',
+    },
   }
 
   const { icon, text } = displayMap[selection.type]

@@ -21,7 +21,7 @@ export function ConfigForm({
   onParamChange,
   onAdditionalRequirementsChange,
   onCancel,
-  onConfirm
+  onConfirm,
 }: ConfigFormProps) {
   return (
     <div className="border-t border-gray-200 p-3 bg-blue-50">
@@ -31,11 +31,7 @@ export function ConfigForm({
           <span className="text-base">{agent.icon}</span>
           <span className="text-sm font-medium text-gray-900">{agent.name}</span>
         </div>
-        <button
-          onClick={onCancel}
-          className="text-gray-400 hover:text-gray-600 transition-colors"
-          title="取消"
-        >
+        <button onClick={onCancel} className="text-gray-400 hover:text-gray-600 transition-colors" title="取消">
           <XCircle className="h-4 w-4" />
         </button>
       </div>
@@ -44,12 +40,7 @@ export function ConfigForm({
       {agent.params && agent.params.length > 0 && (
         <div className="mb-3">
           {agent.params.map(param => (
-            <ParamField
-              key={param.name}
-              param={param}
-              value={paramValues[param.name]}
-              onChange={onParamChange}
-            />
+            <ParamField key={param.name} param={param} value={paramValues[param.name]} onChange={onParamChange} />
           ))}
         </div>
       )}

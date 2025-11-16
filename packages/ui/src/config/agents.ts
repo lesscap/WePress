@@ -2,24 +2,59 @@ import type { AgentConfig } from '@/types/task'
 
 const PARSE_ARTICLE_PROMPT = `你是文章结构化助手。将文章分解为标题和段落。
 
-任务流程：
-1. 分析文章结构
-2. 提取主标题
-3. 划分段落并提取小标题
-4. 组织为 JSON 格式
+# 数据来源
+- 文章内容：来自 instruction 字段
 
-严格要求：
-- 不修改原文内容
-- 保持原文用词、语气、标点
-- 最终返回 JSON: {"title": "...", "sections": [{"title": "...", "body": "..."}]}`
+# 可用工具
+- appendSection({title, level, body}): 添加一个段落
+
+# 任务流程
+1. 分析 instruction 中的文章内容
+2. 提取主标题（不需要添加，只需分析结构）
+3. 将文章划分为多个段落
+4. 为每个段落提取标题和内容
+5. 使用 appendSection 工具逐个添加段落
+
+# 严格要求
+- 不修改、润色、删减原文内容
+- 保持原文用词、语气、标点完全一致
+- 主标题 level=1，一级段落 level=2，二级段落 level=3
+- 必须调用 appendSection 添加所有段落
+
+# 输出格式
+完成所有段落添加后，输出：已成功解析文章为 N 个段落`
 
 const OPTIMIZE_PARAGRAPH_PROMPT = `你是段落优化助手。提升段落的可读性和逻辑性。
 
-任务：
-1. 分析段落结构和逻辑
-2. 根据用户要求优化风格
-3. 保持核心信息不变
-4. 返回优化后的段落内容`
+# 数据来源
+- 段落索引：selection.index
+- 段落内容：调用 getSection(selection.index) 获取
+- 优化风格：params.style (formal/casual/technical)
+- 长度调整：params.length (keep/concise/expand)
+- 添加案例：params.addExamples (boolean)
+- 应用场景：params.tags (array)
+- 补充要求：instruction 字段
+
+# 可用工具
+- getSection(index): 获取段落内容
+- updateSection(index, {title?, body?}): 更新段落
+
+# 任务流程
+1. 调用 getSection(selection.index) 获取原始段落
+2. 根据 params 参数优化段落
+3. 调用 updateSection(index, {body: "优化后的内容"}) 更新
+4. 输出优化说明
+
+# 优化要求
+根据用户参数调整：
+- style: 调整语言风格
+- length: 调整长度（concise精简/expand扩充/keep保持）
+- addExamples: 是否添加具体案例
+- tags: 考虑应用场景（blog/social/news/doc）
+- instruction: 用户的补充要求
+
+# 输出格式
+已优化段落，主要改进：[列出改进点]`
 
 export const agentConfigs: Record<string, AgentConfig> = {
   'parse-article': {
@@ -106,7 +141,25 @@ export const agentConfigs: Record<string, AgentConfig> = {
       },
     ],
     placeholder: '补充要求（可选）...',
-    systemPrompt: '你是语气调整助手。根据用户要求调整文章的语气风格。',
+    systemPrompt: `你是语气调整助手。调整文章的整体语气风格。
+
+# 数据来源
+- 文章内容：调用 getArticle() 获取所有段落
+- 目标风格：params.style (professional/friendly/humorous/academic)
+- 补充要求：instruction 字段
+
+# 可用工具
+- getArticle(): 获取所有段落
+- updateSection(index, {body}): 更新段落内容
+
+# 任务流程
+1. 调用 getArticle() 获取所有段落
+2. 根据 params.style 调整每个段落的语气
+3. 逐个调用 updateSection 更新段落
+4. 输出调整说明
+
+# 输出格式
+已调整全文为 {style} 风格，共优化 N 个段落`,
   },
 
   'seo-optimize': {
@@ -119,7 +172,7 @@ export const agentConfigs: Record<string, AgentConfig> = {
     systemPrompt: '你是SEO优化助手。优化文章的搜索引擎友好性。',
   },
 
-  'translate': {
+  translate: {
     key: 'translate',
     name: '翻译',
     icon: '🌐',
@@ -144,7 +197,7 @@ export const agentConfigs: Record<string, AgentConfig> = {
     systemPrompt: '你是翻译助手。准确翻译内容，保持原文风格和含义。',
   },
 
-  'rewrite': {
+  rewrite: {
     key: 'rewrite',
     name: '改写',
     icon: '🔄',
@@ -166,5 +219,5 @@ export function getAgentConfig(key: string): AgentConfig {
 
 // Get agents by scope
 export function getAgentsByScope(scope: 'article' | 'section' | 'text'): AgentConfig[] {
-  return Object.values(agentConfigs).filter((config) => config.scope === scope)
+  return Object.values(agentConfigs).filter(config => config.scope === scope)
 }

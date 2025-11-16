@@ -26,7 +26,7 @@ export const LLMService = (_app: Application) => {
     const response = await fetch(`${baseURL}/chat/completions`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
+        Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({

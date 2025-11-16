@@ -57,7 +57,7 @@ export const ParsingController = (app: FastifyInstance) => {
       reply.raw.writeHead(200, {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive',
+        Connection: 'keep-alive',
       })
 
       // Stream the response

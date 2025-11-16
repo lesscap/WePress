@@ -6,7 +6,11 @@ type ParamFieldProps = {
   onChange: (name: string, value: string | number | boolean | string[]) => void
 }
 
-export function SelectField({ param, value, onChange }: ParamFieldProps & { param: Extract<AgentParam, { type: 'select' }> }) {
+export function SelectField({
+  param,
+  value,
+  onChange,
+}: ParamFieldProps & { param: Extract<AgentParam, { type: 'select' }> }) {
   return (
     <div className="mb-3">
       <label className="mb-1.5 block text-xs font-medium text-gray-700">
@@ -28,7 +32,11 @@ export function SelectField({ param, value, onChange }: ParamFieldProps & { para
   )
 }
 
-export function RadioField({ param, value, onChange }: ParamFieldProps & { param: Extract<AgentParam, { type: 'radio' }> }) {
+export function RadioField({
+  param,
+  value,
+  onChange,
+}: ParamFieldProps & { param: Extract<AgentParam, { type: 'radio' }> }) {
   const currentValue = value ?? param.defaultValue
   return (
     <div className="mb-3">
@@ -55,16 +63,18 @@ export function RadioField({ param, value, onChange }: ParamFieldProps & { param
   )
 }
 
-export function BooleanField({ param, value, onChange }: ParamFieldProps & { param: Extract<AgentParam, { type: 'boolean' }> }) {
+export function BooleanField({
+  param,
+  value,
+  onChange,
+}: ParamFieldProps & { param: Extract<AgentParam, { type: 'boolean' }> }) {
   const currentValue = value ?? param.defaultValue
   return (
     <div className="mb-3">
       <label className="flex items-center justify-between cursor-pointer">
         <div>
           <div className="text-xs font-medium text-gray-700">{param.label}</div>
-          {param.description && (
-            <div className="text-xs text-gray-500 mt-0.5">{param.description}</div>
-          )}
+          {param.description && <div className="text-xs text-gray-500 mt-0.5">{param.description}</div>}
         </div>
         <button
           type="button"
@@ -84,7 +94,11 @@ export function BooleanField({ param, value, onChange }: ParamFieldProps & { par
   )
 }
 
-export function TextField({ param, value, onChange }: ParamFieldProps & { param: Extract<AgentParam, { type: 'text' }> }) {
+export function TextField({
+  param,
+  value,
+  onChange,
+}: ParamFieldProps & { param: Extract<AgentParam, { type: 'text' }> }) {
   const currentValue = value ?? param.defaultValue ?? ''
   return (
     <div className="mb-3">

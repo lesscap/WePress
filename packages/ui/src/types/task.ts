@@ -9,7 +9,7 @@ export type TaskRequest = {
   agentKey: string
   scope: EditorSelection
   params: Record<string, unknown>
-  instruction?: string  // User's text instruction for LLM prompt
+  instruction?: string // User's text instruction for LLM prompt
   createdAt: number
 }
 
@@ -21,7 +21,7 @@ export type Task = {
   agentKey: string
   scope: EditorSelection
   params: Record<string, unknown>
-  instruction?: string  // User's text instruction for LLM prompt
+  instruction?: string // User's text instruction for LLM prompt
 
   // Agent query data
   messages: AgentMessage[]

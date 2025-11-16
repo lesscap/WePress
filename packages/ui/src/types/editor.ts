@@ -10,7 +10,13 @@ export type Section = {
 export type EditorSelection =
   | { type: 'none' }
   | { type: 'section'; sectionIndex: number; sectionId: string; sectionTitle: string }
-  | { type: 'text'; sectionIndex: number; sectionId: string; range: { start: number; end: number }; selectedText: string }
+  | {
+      type: 'text'
+      sectionIndex: number
+      sectionId: string
+      range: { start: number; end: number }
+      selectedText: string
+    }
 
 // Agent parameter types
 type AgentParamBase = {
@@ -68,14 +74,7 @@ type SliderParam = AgentParamBase & {
   description?: string
 }
 
-export type AgentParam =
-  | SelectParam
-  | RadioParam
-  | BooleanParam
-  | TagsParam
-  | NumberParam
-  | TextParam
-  | SliderParam
+export type AgentParam = SelectParam | RadioParam | BooleanParam | TagsParam | NumberParam | TextParam | SliderParam
 
 export type AgentDef = {
   id: string
@@ -83,5 +82,5 @@ export type AgentDef = {
   icon: string
   description: string
   params?: AgentParam[]
-  placeholder?: string  // Placeholder for additional requirements input
+  placeholder?: string // Placeholder for additional requirements input
 }

@@ -38,12 +38,6 @@ const ChatCompletionSchema = {
       temperature: { type: 'number', minimum: 0, maximum: 2 },
       max_tokens: { type: 'integer', minimum: 1 },
       stream: { type: 'boolean' },
-      stream_options: {
-        type: 'object',
-        properties: {
-          include_usage: { type: 'boolean' },
-        },
-      },
     },
   },
 }
@@ -66,7 +60,7 @@ export const ChatController = (app: FastifyInstance) => {
       const response = await fetch('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${apiKey}`,
+          Authorization: `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -75,7 +69,7 @@ export const ChatController = (app: FastifyInstance) => {
           temperature,
           ...(max_tokens && { max_tokens }),
           stream,
-          ...(stream && { stream_options: request.body.stream_options }),
+          ...(stream && { stream_options: { include_usage: true } }),
         }),
       })
 
@@ -99,7 +93,7 @@ export const ChatController = (app: FastifyInstance) => {
       reply.raw.writeHead(200, {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive',
+        Connection: 'keep-alive',
       })
 
       const reader = response.body?.getReader()

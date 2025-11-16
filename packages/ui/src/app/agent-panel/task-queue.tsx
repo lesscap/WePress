@@ -32,10 +32,7 @@ export function TaskQueue({ tasks, onRemove }: TaskQueueProps) {
             const scopeDisplay = getScopeDisplay(task)
 
             return (
-              <div
-                key={task.id}
-                className="px-3 py-1.5 hover:bg-gray-50 flex items-center justify-between gap-2"
-              >
+              <div key={task.id} className="px-3 py-1.5 hover:bg-gray-50 flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2 flex-1 min-w-0 text-xs">
                   <span>{agentConfig.icon}</span>
                   <span className="text-gray-900">{agentConfig.name}</span>

@@ -25,11 +25,11 @@ export function getAgentConfig(item: Task | TaskRequest): AgentConfig {
  */
 export function getStatus(task: Task): TaskStatus {
   if (!task.endTime) {
-    const hasAbort = task.messages.some((m) => m.type === 'abort')
+    const hasAbort = task.messages.some(m => m.type === 'abort')
     return hasAbort ? 'aborted' : 'running'
   }
 
-  const hasError = task.messages.some((m) => m.type === 'error')
+  const hasError = task.messages.some(m => m.type === 'error')
   return hasError ? 'failed' : 'completed'
 }
 
@@ -39,7 +39,7 @@ export function getStatus(task: Task): TaskStatus {
 export function getStreamingOutput(task: Task): string {
   return task.messages
     .filter((m): m is Extract<typeof m, { type: 'text' }> => m.type === 'text' && m.delta)
-    .map((m) => m.content.text)
+    .map(m => m.content.text)
     .join('')
 }
 

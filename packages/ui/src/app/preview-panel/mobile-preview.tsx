@@ -47,9 +47,7 @@ export function MobilePreview({ currentTime }: MobilePreviewProps) {
           <div className="flex-1 overflow-y-auto bg-white">
             {/* Article Header */}
             <div className="px-5 pt-5 pb-4 border-b border-gray-100">
-              <h1 className="text-xl font-bold text-gray-900 leading-tight mb-3">
-                文章标题将在这里显示
-              </h1>
+              <h1 className="text-xl font-bold text-gray-900 leading-tight mb-3">文章标题将在这里显示</h1>
               <div className="flex items-center gap-2 text-xs text-gray-500">
                 <span>作者名称</span>
                 <span>·</span>
@@ -59,9 +57,7 @@ export function MobilePreview({ currentTime }: MobilePreviewProps) {
 
             {/* Article Content */}
             <div className="px-5 py-4 text-sm text-gray-700 leading-relaxed">
-              <p className="mb-4">
-                这里将显示文章的正文内容。选择模板后，内容会按照所选模板的样式进行渲染。
-              </p>
+              <p className="mb-4">这里将显示文章的正文内容。选择模板后，内容会按照所选模板的样式进行渲染。</p>
               <p className="mb-4">支持多段落排版，图文混排，以及各种富文本格式。</p>
               <div className="h-32 bg-gray-100 rounded-lg flex items-center justify-center mb-4 text-gray-400 text-xs">
                 图片占位

@@ -16,7 +16,7 @@ export function ParamField({ param, value, onChange }: ParamFieldProps) {
     tags: TagsField,
     number: NumberField,
     text: TextField,
-    slider: SliderField
+    slider: SliderField,
   }
 
   const Component = fieldComponents[param.type] as React.ComponentType<ParamFieldProps>

@@ -1,9 +1,5 @@
 import type { AgentDef, EditorSelection } from '@/types/editor'
-import {
-  mockArticleLevelAgents,
-  mockSectionLevelAgents,
-  mockTextLevelAgents
-} from '@/mocks/editor-data'
+import { mockArticleLevelAgents, mockSectionLevelAgents, mockTextLevelAgents } from '@/mocks/editor-data'
 
 type QuickActionsProps = {
   selection: EditorSelection

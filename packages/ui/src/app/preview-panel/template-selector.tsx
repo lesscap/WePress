@@ -10,7 +10,7 @@ const templates = [
   { id: '2', name: '科技风' },
   { id: '3', name: '文艺风' },
   { id: '4', name: '商务风' },
-  { id: '5', name: '清新风' }
+  { id: '5', name: '清新风' },
 ]
 
 export function TemplateSelector({ isOpen, onToggle }: TemplateSelectorProps) {
@@ -18,11 +18,7 @@ export function TemplateSelector({ isOpen, onToggle }: TemplateSelectorProps) {
     <div className="border-t border-gray-200 bg-white p-4">
       <div className="flex items-center justify-between mb-3">
         <div className="text-xs font-medium text-gray-500">选择模板</div>
-        <button
-          type="button"
-          onClick={onToggle}
-          className="text-gray-500 hover:text-gray-700"
-        >
+        <button type="button" onClick={onToggle} className="text-gray-500 hover:text-gray-700">
           {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
         </button>
       </div>

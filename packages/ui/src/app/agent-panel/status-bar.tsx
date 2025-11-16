@@ -11,16 +11,12 @@ export function StatusBar({ selection, totalTokens, isActive }: StatusBarProps) 
     none: { icon: '📄', text: '全文' },
     section: {
       icon: '📝',
-      text: selection.type === 'section'
-        ? `第 ${selection.sectionIndex + 1} 段：${selection.sectionTitle}`
-        : ''
+      text: selection.type === 'section' ? `第 ${selection.sectionIndex + 1} 段：${selection.sectionTitle}` : '',
     },
     text: {
       icon: '✏️',
-      text: selection.type === 'text'
-        ? `"${selection.selectedText}"`
-        : ''
-    }
+      text: selection.type === 'text' ? `"${selection.selectedText}"` : '',
+    },
   }
 
   const { icon, text } = displayMap[selection.type]
@@ -40,12 +36,8 @@ export function StatusBar({ selection, totalTokens, isActive }: StatusBarProps) 
           <span>{text}</span>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-gray-500">
-            💰 {formatTokens(totalTokens)}
-          </span>
-          <span className={isActive ? 'text-blue-600' : 'text-gray-400'}>
-            {isActive ? '⚡ Active' : '⚡ Idle'}
-          </span>
+          <span className="text-gray-500">💰 {formatTokens(totalTokens)}</span>
+          <span className={isActive ? 'text-blue-600' : 'text-gray-400'}>{isActive ? '⚡ Active' : '⚡ Idle'}</span>
         </div>
       </div>
     </div>
