@@ -1,3 +1,5 @@
+import { useState, useCallback } from 'react'
+import type { AgentMessage } from '@wepress/agent-query'
 import type { Task } from '@/types/task'
 import { getStatus, getAgentConfig, getScopeDisplay, getTimestamp } from './task-helpers'
 import { MessageList } from './messages/message-list'
@@ -12,6 +14,16 @@ export function TaskCard({ task }: TaskCardProps) {
   const agentConfig = getAgentConfig(task)
   const scopeDisplay = getScopeDisplay(task)
   const timestamp = getTimestamp(task)
+
+  // Maintain tool results mapping
+  const [toolResults, setToolResults] = useState<Record<string, AgentMessage & { type: 'tool_result' }>>({})
+
+  const handleToolResultUpdate = useCallback((toolCallId: string, result: AgentMessage & { type: 'tool_result' }) => {
+    setToolResults(prev => ({
+      ...prev,
+      [toolCallId]: result,
+    }))
+  }, [])
 
   const statusConfig = {
     completed: { icon: '✅', color: 'text-green-600' },
@@ -36,7 +48,7 @@ export function TaskCard({ task }: TaskCardProps) {
       </div>
 
       {/* Messages */}
-      <MessageList messages={task.messages} />
+      <MessageList messages={task.messages} toolResults={toolResults} onToolResultUpdate={handleToolResultUpdate} />
 
       {/* TodoList */}
       {task.todoList && <TodoListPanel todoList={task.todoList} />}

@@ -93,10 +93,44 @@ export function AgentPanel({ selection }: AgentPanelProps) {
 
       // Consume stream, update messages in real-time
       for await (const message of query.stream) {
+        console.log('[AgentPanel] Message received:', message.type, message)
+
         updateCurrentTask(prev => {
           if (!prev) return null
           const updated = { ...prev }
-          updated.messages = [...prev.messages, message]
+
+          // Handle text messages with conversationId merging
+          if (message.type === 'text') {
+            const existingIndex = prev.messages.findIndex(
+              msg => msg.type === 'text' && msg.conversationId === message.conversationId,
+            )
+
+            if (existingIndex >= 0) {
+              // Update existing text message (accumulate delta)
+              updated.messages = prev.messages.map((msg, idx) => {
+                if (idx !== existingIndex || msg.type !== 'text') return msg
+
+                const newText = message.delta
+                  ? msg.content.text + message.content.text
+                  : message.content.text
+
+                return {
+                  ...msg,
+                  content: {
+                    ...msg.content,
+                    text: newText,
+                    status: message.content.status,
+                  },
+                }
+              })
+            } else {
+              // New text message
+              updated.messages = [...prev.messages, message]
+            }
+          } else {
+            // For other message types (tool_call, tool_result, usage, etc.), just append
+            updated.messages = [...prev.messages, message]
+          }
 
           // Update todoList
           if (message.type === 'todolist') {
