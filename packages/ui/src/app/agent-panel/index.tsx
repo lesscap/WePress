@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, type Dispatch, type SetStateAction } from 'react'
 import type { AgentQuery } from '@wepress/agent-query'
 import { TaskHistory } from './task-history'
 import { TaskQueue } from './task-queue'
@@ -8,18 +8,18 @@ import type { EditorSelection, Section } from '@/types/editor'
 import type { Task, TaskRequest } from '@/types/task'
 import { executeAgent } from '@/services/agent-executor'
 import { createToolExecutor } from '@/services/agent-tools'
-import { mockSections } from '@/mocks/editor-data'
 
 type AgentPanelProps = {
   selection: EditorSelection
+  sections: Section[]
+  setSections: Dispatch<SetStateAction<Section[]>>
 }
 
-export function AgentPanel({ selection }: AgentPanelProps) {
+export function AgentPanel({ selection, sections, setSections }: AgentPanelProps) {
   // State
   const [tasks, setTasks] = useState<Task[]>([])
   const [queue, setQueue] = useState<TaskRequest[]>([])
   const [currentTask, setCurrentTask] = useState<Task | null>(null)
-  const [sections, setSections] = useState<Section[]>(mockSections)
 
   // Refs - avoid closure issues
   const currentTaskRef = useRef<Task | null>(null)

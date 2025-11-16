@@ -1,12 +1,14 @@
-import { useState } from 'react'
+import { useState, type Dispatch, type SetStateAction } from 'react'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
 import { PreviewPanel } from '../preview-panel'
 import { ArticleEditor } from '../article-editor'
 import { AgentPanel } from '../agent-panel'
-import type { EditorSelection } from '@/types/editor'
+import type { EditorSelection, Section } from '@/types/editor'
+import { mockSections } from '@/mocks/editor-data'
 
 export function EditorLayout() {
   const [selection, setSelection] = useState<EditorSelection>({ type: 'none' })
+  const [sections, setSections] = useState<Section[]>(mockSections)
 
   return (
     <div className="flex h-full flex-col">
@@ -26,14 +28,14 @@ export function EditorLayout() {
 
         {/* Center: Article Editor */}
         <ResizablePanel defaultSize={45} minSize={30}>
-          <ArticleEditor selection={selection} onSelectionChange={setSelection} />
+          <ArticleEditor selection={selection} onSelectionChange={setSelection} sections={sections} setSections={setSections} />
         </ResizablePanel>
 
         <ResizableHandle />
 
         {/* Right: Agent Panel */}
         <ResizablePanel defaultSize={30} minSize={20}>
-          <AgentPanel selection={selection} />
+          <AgentPanel selection={selection} sections={sections} setSections={setSections} />
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>
