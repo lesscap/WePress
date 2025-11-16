@@ -1,9 +1,13 @@
+import { useState } from 'react'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
 import { PreviewPanel } from '../preview-panel'
-import { EditPanel } from '../edit-panel'
-import { ChatPanel } from '../chat-panel'
+import { ArticleEditor } from '../article-editor'
+import { AgentPanel } from '../agent-panel'
+import type { EditorSelection } from '@/types/editor'
 
 export function EditorLayout() {
+  const [selection, setSelection] = useState<EditorSelection>({ type: 'none' })
+
   return (
     <div className="flex h-full flex-col">
       {/* Header */}
@@ -20,16 +24,16 @@ export function EditorLayout() {
 
         <ResizableHandle />
 
-        {/* Center: Edit Panel */}
+        {/* Center: Article Editor */}
         <ResizablePanel defaultSize={45} minSize={30}>
-          <EditPanel />
+          <ArticleEditor selection={selection} onSelectionChange={setSelection} />
         </ResizablePanel>
 
         <ResizableHandle />
 
-        {/* Right: Chat Panel */}
+        {/* Right: Agent Panel */}
         <ResizablePanel defaultSize={30} minSize={20}>
-          <ChatPanel />
+          <AgentPanel selection={selection} />
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>
