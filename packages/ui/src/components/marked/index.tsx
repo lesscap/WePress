@@ -1,4 +1,5 @@
 import { lazy, Suspense } from 'react'
+import styles from './style.module.scss'
 
 type MarkedProps = {
   content: string
@@ -15,7 +16,7 @@ const MarkedContent = lazy(() =>
     return {
       default: ({ content }: MarkedProps) => {
         const html = marked(content) as string
-        return <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: html }} />
+        return <div className={styles.markdown} dangerouslySetInnerHTML={{ __html: html }} />
       },
     }
   }),
