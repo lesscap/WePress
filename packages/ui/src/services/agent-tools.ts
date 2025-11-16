@@ -6,6 +6,15 @@ import type { Section } from '@/types/editor'
  */
 export const AGENT_TOOLS: ToolDefinition[] = [
   {
+    name: 'clearSections',
+    description: '清空文章所有段落（用于开始新文章）',
+    parameters: {
+      type: 'object',
+      properties: {},
+    },
+  },
+
+  {
     name: 'appendSection',
     description: '添加一个新段落到文章末尾',
     parameters: {
@@ -79,6 +88,11 @@ export function createToolExecutor(context: {
 }) {
   // Define tool handlers
   const handlers: Record<string, ToolHandler> = {
+    clearSections: async () => {
+      context.setSections([])
+      return { result: '已清空所有段落' }
+    },
+
     appendSection: async args => {
       const {
         title,
