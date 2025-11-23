@@ -63,7 +63,7 @@ ${JSON.stringify(userContext, null, 2)}
     prompt,
     systemPrompt: config.systemPrompt,
     provider: createAIProxyProvider({
-      model: 'qwen-plus',
+      model: config.model || 'qwen-plus',
       baseUrl: '/api/chat/completions',
     }),
     agentMode: true,

@@ -49,6 +49,7 @@ export const AGENT_TOOLS: ToolDefinition[] = [
         index: { type: 'number', description: '段落索引' },
         title: { type: 'string', description: '新标题（可选）' },
         body: { type: 'string', description: '新内容（可选）' },
+        image: { type: 'string', description: '配图 URL（可选）' },
       },
       required: ['index'],
     },
@@ -69,6 +70,22 @@ export const AGENT_TOOLS: ToolDefinition[] = [
     parameters: {
       type: 'object',
       properties: {},
+    },
+  },
+
+  {
+    name: 'generateImage',
+    description: '根据提示词生成图片，返回图片 URL',
+    parameters: {
+      type: 'object',
+      properties: {
+        prompt: { type: 'string', description: '图片生成提示词（中文或英文）' },
+        size: {
+          type: 'string',
+          description: '图片尺寸，可选：1328*1328(1:1), 1664*928(16:9), 928*1664(9:16), 1472*1140(4:3), 1140*1472(3:4)',
+        },
+      },
+      required: ['prompt'],
     },
   },
 ]
@@ -134,10 +151,11 @@ export function createToolExecutor(context: {
     },
 
     updateSection: async args => {
-      const { index, title, body } = args as {
+      const { index, title, body, image } = args as {
         index: number
         title?: string
         body?: string
+        image?: string
       }
 
       const section = context.sections[index]
@@ -152,6 +170,7 @@ export function createToolExecutor(context: {
             ...s,
             title: title ?? s.title,
             body: body ?? s.body,
+            image: image ?? s.image,
           }
         }),
       )
@@ -176,6 +195,31 @@ export function createToolExecutor(context: {
         return { error: '没有选中文本' }
       }
       return { result: context.selectedText }
+    },
+
+    generateImage: async args => {
+      const { prompt, size = '1328*1328' } = args as {
+        prompt: string
+        size?: string
+      }
+
+      try {
+        const response = await fetch('/api/image/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt, size }),
+        })
+
+        if (!response.ok) {
+          const error = await response.json()
+          return { error: error.error?.message || '图片生成失败' }
+        }
+
+        const data = await response.json()
+        return { result: { imageUrl: data.image } }
+      } catch (error) {
+        return { error: error instanceof Error ? error.message : '图片生成失败' }
+      }
     },
   }
 

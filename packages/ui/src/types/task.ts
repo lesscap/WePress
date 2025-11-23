@@ -65,4 +65,5 @@ export type AgentConfig = {
   params?: AgentParam[]
   placeholder?: string
   systemPrompt: string
+  model?: string // 默认 'qwen-plus'
 }

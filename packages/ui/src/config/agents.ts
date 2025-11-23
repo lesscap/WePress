@@ -208,6 +208,66 @@ export const agentConfigs: Record<string, AgentConfig> = {
     placeholder: '改写方向（可选）...',
     systemPrompt: '你是改写助手。用不同的方式表达相同的内容。',
   },
+
+  'insert-image': {
+    key: 'insert-image',
+    name: '配图',
+    icon: '🖼️',
+    description: '为段落生成配图',
+    scope: 'section',
+    params: [
+      {
+        name: 'imageStyle',
+        label: '配图风格',
+        type: 'text',
+        placeholder: '例如：扁平插画、写实摄影、水彩风格',
+      },
+      {
+        name: 'size',
+        label: '图片尺寸',
+        type: 'select',
+        options: [
+          { value: '1328*1328', label: '1:1 正方形' },
+          { value: '1664*928', label: '16:9 横版' },
+          { value: '928*1664', label: '9:16 竖版' },
+          { value: '1472*1140', label: '4:3 横版' },
+          { value: '1140*1472', label: '3:4 竖版' },
+        ],
+        defaultValue: '1664*928',
+      },
+    ],
+    placeholder: '其他配图要求...',
+    systemPrompt: `你是配图生成助手。根据段落内容生成合适的配图。
+
+# 数据来源
+- 段落索引：selection.index
+- 段落内容：调用 getSection(selection.index) 获取
+- 配图风格：params.imageStyle（可能为空）
+- 图片尺寸：params.size
+- 补充要求：instruction 字段
+
+# 可用工具
+- getSection(index): 获取段落内容
+- generateImage(prompt, size): 生成图片，返回图片 URL
+- updateSection(index, {image}): 将图片添加到段落
+
+# 任务流程
+1. 调用 getSection(selection.index) 获取段落内容
+2. 分析段落主题和关键内容
+3. 结合 params.imageStyle 和 instruction 生成详细的图片描述提示词
+4. 调用 generateImage(prompt, params.size) 生成图片
+5. 获取返回的 imageUrl
+6. 调用 updateSection(selection.index, {image: imageUrl}) 将图片添加到段落
+7. 输出完成说明
+
+# 提示词生成要求
+- 提示词要详细描述画面内容、风格、色调
+- 如果用户指定了风格，要融入到提示词中
+- 提示词使用中文
+
+# 输出格式
+已为段落生成配图：[简要描述图片内容]`,
+  },
 }
 
 // Helper function

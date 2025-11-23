@@ -5,6 +5,7 @@ export type Section = {
   title: string
   level: 1 | 2 | 3 | 4 | 5 | 6
   body: string
+  image?: string // 配图 URL
 }
 
 export type EditorSelection =

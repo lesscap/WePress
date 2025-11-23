@@ -197,11 +197,14 @@ export function AgentPanel({ selection, sections, setSections }: AgentPanelProps
       <StatusBar
         selection={selection}
         usage={allTasks.reduce(
-          (acc, t) => ({
-            inputTokens: acc.inputTokens + (t.usage?.inputTokens || 0),
-            outputTokens: acc.outputTokens + (t.usage?.outputTokens || 0),
-            totalTokens: acc.totalTokens + (t.usage?.totalTokens || 0),
-          }),
+          (acc, t) => {
+            if (!t) return acc
+            return {
+              inputTokens: acc.inputTokens + (t.usage?.inputTokens || 0),
+              outputTokens: acc.outputTokens + (t.usage?.outputTokens || 0),
+              totalTokens: acc.totalTokens + (t.usage?.totalTokens || 0),
+            }
+          },
           { inputTokens: 0, outputTokens: 0, totalTokens: 0 },
         )}
         isActive={hasRunningTask}
