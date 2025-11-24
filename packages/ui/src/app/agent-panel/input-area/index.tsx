@@ -19,7 +19,7 @@ export function InputArea({ selection, onAddTaskRequest, onAbort, isRunning }: I
   const [additionalRequirements, setAdditionalRequirements] = useState('')
   const [inputValue, setInputValue] = useState('')
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
 
   const agentsByScope = {
@@ -56,8 +56,8 @@ export function InputArea({ selection, onAddTaskRequest, onAbort, isRunning }: I
       if (
         menuRef.current &&
         !menuRef.current.contains(event.target as Node) &&
-        inputRef.current &&
-        !inputRef.current.contains(event.target as Node)
+        textareaRef.current &&
+        !textareaRef.current.contains(event.target as Node)
       ) {
         setIsMenuOpen(false)
       }
@@ -73,7 +73,7 @@ export function InputArea({ selection, onAddTaskRequest, onAbort, isRunning }: I
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && inputValue.trim() && !inputValue.startsWith('/')) {
+    if (e.key === 'Enter' && !e.shiftKey && inputValue.trim() && !inputValue.startsWith('/')) {
       e.preventDefault()
       const request: TaskRequest = {
         id: `req-${Date.now()}`,
@@ -152,15 +152,21 @@ export function InputArea({ selection, onAddTaskRequest, onAbort, isRunning }: I
       )}
 
       {/* Input Field */}
-      <div className="flex items-center gap-2">
-        <input
-          ref={inputRef}
-          type="text"
+      <div className="flex items-start gap-2">
+        <textarea
+          ref={textareaRef}
           value={inputValue}
           onChange={e => handleInputChange(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="输入指令，或按 / 选择命令..."
-          className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          rows={1}
+          className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none min-h-[38px] max-h-32 overflow-y-auto"
+          style={{ height: 'auto' }}
+          onInput={e => {
+            const target = e.target as HTMLTextAreaElement
+            target.style.height = 'auto'
+            target.style.height = `${Math.min(target.scrollHeight, 128)}px`
+          }}
         />
         {isRunning && onAbort && (
           <button
