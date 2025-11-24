@@ -12,11 +12,22 @@ type SectionBlockProps = {
   onUpdate: (result: ParseResult) => void
 }
 
+// Indentation based on heading level (H1=0, H2=1, H3=2, etc.)
+const indentClass: Record<number, string> = {
+  1: 'ml-0',
+  2: 'ml-6',
+  3: 'ml-12',
+  4: 'ml-16',
+  5: 'ml-20',
+  6: 'ml-24',
+}
+
 export function SectionBlock({ section, index, isSelected, onSelect, onUpdate }: SectionBlockProps) {
   const [editMarkdown, setEditMarkdown] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const HeadingTag = `h${section.level}` as const
+  const indent = indentClass[section.level] || 'ml-0'
 
   useEffect(() => {
     if (isSelected) {
@@ -37,7 +48,7 @@ export function SectionBlock({ section, index, isSelected, onSelect, onUpdate }:
 
   if (isSelected) {
     return (
-      <div className="rounded-lg border border-blue-500 bg-blue-50 p-4" onClick={e => e.stopPropagation()}>
+      <div className={cn('rounded-lg border border-blue-500 bg-blue-50 p-4', indent)} onClick={e => e.stopPropagation()}>
         <label className="mb-2 block text-xs font-medium text-gray-700">
           编辑段落 (Markdown) - 使用 # 标题可拆分为多段
         </label>
@@ -59,6 +70,7 @@ export function SectionBlock({ section, index, isSelected, onSelect, onUpdate }:
       className={cn(
         'group rounded-lg border p-4 transition-all cursor-pointer',
         'border-gray-200 hover:border-gray-300 hover:bg-gray-50',
+        indent,
       )}
       onClick={handleClick}
     >
