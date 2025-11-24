@@ -71,5 +71,5 @@ export function parseMarkdownToSections(markdown: string): ParseResult {
  */
 export function sectionToMarkdown(section: Section): string {
   const heading = '#'.repeat(section.level) + ' ' + section.title
-  return heading + '\n' + section.body
+  return heading + '\n\n' + section.body
 }

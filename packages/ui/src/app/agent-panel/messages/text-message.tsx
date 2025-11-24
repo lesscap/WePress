@@ -26,7 +26,7 @@ export function TextMessage({ messages }: TextMessageProps) {
   }
 
   return (
-    <div className="text-xs text-gray-700">
+    <div className="text-sm text-gray-700">
       <Marked content={displayText} />
     </div>
   )

@@ -113,7 +113,7 @@ describe('parseMarkdownToSections', () => {
 })
 
 describe('sectionToMarkdown', () => {
-  it('converts section to markdown format', () => {
+  it('converts section to markdown format with blank line', () => {
     const section = {
       id: 'test-1',
       title: '测试标题',
@@ -123,7 +123,7 @@ describe('sectionToMarkdown', () => {
 
     const markdown = sectionToMarkdown(section)
 
-    expect(markdown).toBe('## 测试标题\n这是正文内容')
+    expect(markdown).toBe('## 测试标题\n\n这是正文内容')
   })
 
   it('handles different heading levels', () => {
@@ -136,6 +136,6 @@ describe('sectionToMarkdown', () => {
 
     const markdown = sectionToMarkdown(section)
 
-    expect(markdown).toContain('#### H4 标题')
+    expect(markdown).toBe('#### H4 标题\n\n内容')
   })
 })
