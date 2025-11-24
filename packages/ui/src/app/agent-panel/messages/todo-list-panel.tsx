@@ -5,7 +5,9 @@ type TodoListPanelProps = {
 }
 
 export function TodoListPanel({ todoList }: TodoListPanelProps) {
-  if (!todoList.items || todoList.items.length === 0) {
+  const visibleItems = todoList.items?.filter(item => item.status !== 'deleted') || []
+
+  if (visibleItems.length === 0) {
     return null
   }
 
@@ -13,7 +15,7 @@ export function TodoListPanel({ todoList }: TodoListPanelProps) {
     <div className="mb-2">
       <div className="text-xs font-medium text-gray-700 mb-1.5">执行步骤：</div>
       <div className="space-y-1 pl-4">
-        {todoList.items.map((item, idx) => (
+        {visibleItems.map((item, idx) => (
           <div key={idx} className="flex items-start gap-2 text-xs">
             <span className="flex-shrink-0">
               {item.status === 'completed' && '✅'}

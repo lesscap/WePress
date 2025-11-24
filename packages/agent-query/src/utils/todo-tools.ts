@@ -40,15 +40,15 @@ export const TODO_ADD_TOOL: ToolDefinition = {
 
 export const TODO_UPDATE_TOOL: ToolDefinition = {
   name: 'todo_update',
-  description: 'Update task status (record result when completed)',
+  description: 'Update task status (record result when completed, or mark as deleted)',
   parameters: {
     type: 'object',
     properties: {
       index: { type: 'number', description: 'Task index (0-based)' },
       status: {
         type: 'string',
-        enum: ['pending', 'completed'],
-        description: 'New status: pending or completed',
+        enum: ['pending', 'completed', 'deleted'],
+        description: 'New status: pending, completed, or deleted',
       },
       result: {
         type: 'string',
@@ -57,8 +57,11 @@ export const TODO_UPDATE_TOOL: ToolDefinition = {
     },
     required: ['index', 'status'],
   },
-  examples: ['<tool_call>{"name":"todo_update","arguments":{"index":0,"status":"completed","result":"Beijing 15°C"}}</tool_call>'],
-  notes: 'Recommend recording result when status is completed',
+  examples: [
+    '<tool_call>{"name":"todo_update","arguments":{"index":0,"status":"completed","result":"Beijing 15°C"}}</tool_call>',
+    '<tool_call>{"name":"todo_update","arguments":{"index":1,"status":"deleted"}}</tool_call>',
+  ],
+  notes: 'Recommend recording result when status is completed. Use deleted to remove tasks that are no longer needed.',
 }
 
 export const TODO_TOOLS = [TODO_CREATE_TOOL, TODO_ADD_TOOL, TODO_UPDATE_TOOL]
