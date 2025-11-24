@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils'
 import type { Section } from '@/types/editor'
+import { Marked } from '@/components/marked'
 
 type SectionBlockProps = {
   section: Section
@@ -40,8 +41,22 @@ export function SectionBlock({ section, index, isSelected, onSelect }: SectionBl
       </div>
       <div>
         <label className="mb-1 block text-xs font-medium text-gray-500">正文</label>
-        <div className="text-sm text-gray-700 whitespace-pre-wrap">{section.body}</div>
+        <div className="prose prose-sm max-w-none">
+          <Marked content={section.body} />
+        </div>
       </div>
+      {section.image && (
+        <div className="mt-4">
+          <label className="mb-2 block text-xs font-medium text-gray-500">配图</label>
+          <div className="flex justify-center">
+            <img
+              src={section.image}
+              alt={section.title}
+              className="max-w-full h-auto rounded-lg shadow-sm"
+            />
+          </div>
+        </div>
+      )}
     </div>
   )
 }
