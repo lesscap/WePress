@@ -1,36 +1,60 @@
 import { useState, useEffect, useRef } from 'react'
 import { cn } from '@/lib/utils'
-import type { Section } from '@/types/editor'
+import type { Section, EditorSelection } from '@/types/editor'
+import type { ParseResult } from '@/utils/markdown-parser'
+import { parseMarkdownToSections, sectionToMarkdown } from '@/utils/markdown-parser'
 import { Marked } from '@/components/marked'
-import { parseMarkdownToSections, sectionToMarkdown, type ParseResult } from '@/utils/markdown-parser'
-import type { ViewMode } from './index'
+import { getIndent } from './indent'
 
-type SectionBlockProps = {
+type DetailViewProps = {
+  sections: Section[]
+  selection: EditorSelection
+  onSelectionChange: (selection: EditorSelection) => void
+  onSectionUpdate: (index: number, result: ParseResult) => void
+}
+
+export function DetailView({ sections, selection, onSelectionChange, onSectionUpdate }: DetailViewProps) {
+  const handleSelect = (index: number, section: Section) => {
+    onSelectionChange({
+      type: 'section',
+      sectionIndex: index,
+      sectionId: section.id,
+      sectionTitle: section.title,
+    })
+  }
+
+  return (
+    <div className="space-y-4">
+      {sections.map((section, index) => {
+        const isSelected = selection.type === 'section' && selection.sectionIndex === index
+
+        return (
+          <SectionItem
+            key={section.id}
+            section={section}
+            isSelected={isSelected}
+            onSelect={() => handleSelect(index, section)}
+            onUpdate={result => onSectionUpdate(index, result)}
+          />
+        )
+      })}
+    </div>
+  )
+}
+
+type SectionItemProps = {
   section: Section
-  index: number
-  viewMode: ViewMode
   isSelected: boolean
   onSelect: () => void
   onUpdate: (result: ParseResult) => void
 }
 
-// Indentation based on heading level (H1=0, H2=1, H3=2, etc.)
-const indentClass: Record<number, string> = {
-  1: 'ml-0',
-  2: 'ml-6',
-  3: 'ml-12',
-  4: 'ml-16',
-  5: 'ml-20',
-  6: 'ml-24',
-}
-
-export function SectionBlock({ section, index, viewMode, isSelected, onSelect, onUpdate }: SectionBlockProps) {
+function SectionItem({ section, isSelected, onSelect, onUpdate }: SectionItemProps) {
   const [editMarkdown, setEditMarkdown] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const HeadingTag = `h${section.level}` as const
-  const indent = indentClass[section.level] || 'ml-0'
-  const isOutline = viewMode === 'outline'
+  const indent = getIndent(section.level)
 
   useEffect(() => {
     if (isSelected) {
@@ -49,6 +73,7 @@ export function SectionBlock({ section, index, viewMode, isSelected, onSelect, o
     onUpdate(result)
   }
 
+  // Edit mode
   if (isSelected) {
     return (
       <div className={cn('rounded-lg border border-blue-500 bg-blue-50 p-4', indent)} onClick={e => e.stopPropagation()}>
@@ -68,32 +93,7 @@ export function SectionBlock({ section, index, viewMode, isSelected, onSelect, o
     )
   }
 
-  // Outline mode: compact title only
-  if (isOutline) {
-    return (
-      <div
-        className={cn(
-          'group py-1 px-2 rounded cursor-pointer transition-colors',
-          'hover:bg-gray-100',
-          indent,
-        )}
-        onClick={handleClick}
-      >
-        <span
-          className={cn(
-            'text-gray-700',
-            section.level === 1 && 'font-semibold',
-            section.level === 2 && 'font-medium',
-            section.level >= 3 && 'text-gray-600',
-          )}
-        >
-          {section.title}
-        </span>
-      </div>
-    )
-  }
-
-  // Detail mode: full content
+  // Display mode
   return (
     <div
       className={cn(
@@ -120,11 +120,7 @@ export function SectionBlock({ section, index, viewMode, isSelected, onSelect, o
       {section.image && (
         <div className="mt-4">
           <div className="flex justify-center">
-            <img
-              src={section.image}
-              alt={section.title}
-              className="max-w-full h-auto rounded-lg shadow-sm"
-            />
+            <img src={section.image} alt={section.title} className="max-w-full h-auto rounded-lg shadow-sm" />
           </div>
         </div>
       )}

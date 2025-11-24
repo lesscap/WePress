@@ -1,11 +1,12 @@
 import { useState, type Dispatch, type SetStateAction } from 'react'
 import { List, FileText } from 'lucide-react'
-import { SectionBlock } from './section-block'
+import { cn } from '@/lib/utils'
 import type { EditorSelection, Section } from '@/types/editor'
 import type { ParseResult } from '@/utils/markdown-parser'
-import { cn } from '@/lib/utils'
+import { OutlineView } from './outline-view'
+import { DetailView } from './detail-view'
 
-export type ViewMode = 'outline' | 'detail'
+type ViewMode = 'outline' | 'detail'
 
 type ArticleEditorProps = {
   selection: EditorSelection
@@ -32,16 +33,23 @@ export function ArticleEditor({ selection, onSelectionChange, sections, setSecti
           ...prevSection,
           body: prevSection.body + '\n\n' + result.orphanContent,
         }
-        // Remove current section
         updated.splice(index, 1)
       } else {
-        // Replace with new sections
         updated.splice(index, 1, ...result.sections)
       }
 
       return updated
     })
     onSelectionChange({ type: 'none' })
+  }
+
+  const handleMoveSection = (fromIndex: number, toIndex: number) => {
+    setSections(prev => {
+      const updated = [...prev]
+      const [moved] = updated.splice(fromIndex, 1)
+      updated.splice(toIndex, 0, moved)
+      return updated
+    })
   }
 
   return (
@@ -76,26 +84,21 @@ export function ArticleEditor({ selection, onSelectionChange, sections, setSecti
 
       {/* Content area */}
       <div className="flex-1 overflow-y-auto p-8 cursor-default" onClick={handlePageClick}>
-        <div className={cn('space-y-4', viewMode === 'outline' && 'space-y-1')}>
-          {sections.map((section, index) => (
-            <SectionBlock
-              key={section.id}
-              section={section}
-              index={index}
-              viewMode={viewMode}
-              isSelected={selection.type === 'section' && selection.sectionIndex === index}
-              onSelect={() =>
-                onSelectionChange({
-                  type: 'section',
-                  sectionIndex: index,
-                  sectionId: section.id,
-                  sectionTitle: section.title,
-                })
-              }
-              onUpdate={newSections => handleSectionUpdate(index, newSections)}
-            />
-          ))}
-        </div>
+        {viewMode === 'outline' ? (
+          <OutlineView
+            sections={sections}
+            selection={selection}
+            onSelectionChange={onSelectionChange}
+            onMoveSection={handleMoveSection}
+          />
+        ) : (
+          <DetailView
+            sections={sections}
+            selection={selection}
+            onSelectionChange={onSelectionChange}
+            onSectionUpdate={handleSectionUpdate}
+          />
+        )}
       </div>
     </div>
   )
