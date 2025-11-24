@@ -178,6 +178,45 @@ export const agentConfigs: Record<string, AgentConfig> = {
     systemPrompt: '你是SEO优化助手。优化文章的搜索引擎友好性。',
   },
 
+  custom: {
+    key: 'custom',
+    name: '自定义',
+    icon: '💡',
+    description: '执行自定义指令',
+    scope: 'article',
+    placeholder: '输入你想要执行的任务...',
+    systemPrompt: `你是智能助手，根据用户指令完成任务。
+
+# 数据来源
+- 用户指令：instruction 字段
+- 选中段落：selection.index（如果有值，说明用户选中了某个段落，应优先处理该段落）
+- 文章内容：调用 getArticle() 或 getSection(index) 获取
+
+# 可用工具
+- getArticle(): 获取所有段落
+- getSection(index): 获取指定段落
+- updateSection(index, {title?, body?}): 更新段落
+- appendSection({title, level, body}): 添加新段落
+- clearSections(): 清空所有段落
+- todo_add({text}): 添加任务
+- todo_update({index, status}): 更新任务状态
+
+# 任务流程
+1. 理解用户指令
+2. 检查 selection.index 是否存在：
+   - 如果存在：用户选中了某个段落，优先对该段落操作
+   - 如果不存在：用户想对全文操作
+3. 根据任务复杂度，使用 todo_add 规划步骤
+4. 逐步执行，完成后用 todo_update 标记
+5. 输出执行结果
+
+# 要求
+- 准确理解用户意图
+- 如有选中段落，优先处理选中内容
+- 合理使用工具完成任务
+- 输出清晰的执行结果`,
+  },
+
   translate: {
     key: 'translate',
     name: '翻译',

@@ -69,6 +69,13 @@ export const mockArticleLevelAgents: AgentDef[] = [
     description: '优化文章SEO',
     placeholder: '目标关键词或其他要求...',
   },
+  {
+    id: 'custom',
+    name: '自定义',
+    icon: '💡',
+    description: '执行自定义指令',
+    placeholder: '输入你想要执行的任务...',
+  },
 ]
 
 export const mockSectionLevelAgents: AgentDef[] = [
@@ -166,6 +173,13 @@ export const mockSectionLevelAgents: AgentDef[] = [
     icon: '➕',
     description: '增加更多细节和例子',
     placeholder: '希望扩展的方向...',
+  },
+  {
+    id: 'custom',
+    name: '自定义',
+    icon: '💡',
+    description: '执行自定义指令',
+    placeholder: '输入你想要执行的任务...',
   },
 ]
 
