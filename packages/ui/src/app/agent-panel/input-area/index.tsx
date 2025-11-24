@@ -17,6 +17,7 @@ export function InputArea({ selection, onAddTaskRequest, onAbort, isRunning }: I
   const [selectedAgent, setSelectedAgent] = useState<AgentDef | null>(null)
   const [paramValues, setParamValues] = useState<Record<string, string | number | boolean | string[]>>({})
   const [additionalRequirements, setAdditionalRequirements] = useState('')
+  const [inputValue, setInputValue] = useState('')
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -66,9 +67,33 @@ export function InputArea({ selection, onAddTaskRequest, onAbort, isRunning }: I
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
+  const handleInputChange = (value: string) => {
+    setInputValue(value)
+    setIsMenuOpen(value.startsWith('/'))
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && inputValue.trim() && !inputValue.startsWith('/')) {
+      e.preventDefault()
+      const request: TaskRequest = {
+        id: `req-${Date.now()}`,
+        agentKey: 'custom',
+        scope: selection,
+        params: {},
+        instruction: inputValue.trim(),
+        createdAt: Date.now(),
+      }
+      onAddTaskRequest(request)
+      setInputValue('')
+    } else if (e.key === 'Escape') {
+      setIsMenuOpen(false)
+    }
+  }
+
   const handleAgentClick = (agent: AgentDef) => {
     setSelectedAgent(agent)
     setIsMenuOpen(false)
+    setInputValue('')
   }
 
   const handleCancel = () => {
@@ -131,8 +156,10 @@ export function InputArea({ selection, onAddTaskRequest, onAbort, isRunning }: I
         <input
           ref={inputRef}
           type="text"
-          onFocus={() => setIsMenuOpen(true)}
-          placeholder="输入指令或选择操作..."
+          value={inputValue}
+          onChange={e => handleInputChange(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="输入指令，或按 / 选择命令..."
           className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
         {isRunning && onAbort && (

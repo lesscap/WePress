@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import type { AgentDef } from '@/types/editor'
 
 type AgentMenuProps = {
@@ -7,13 +8,15 @@ type AgentMenuProps = {
 }
 
 export function AgentMenu({ agents, scopeDisplayText, onSelect }: AgentMenuProps) {
+  const filteredAgents = useMemo(() => agents.filter(a => a.id !== 'custom'), [agents])
+
   return (
     <div className="absolute bottom-full left-0 right-0 mb-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-64 overflow-y-auto z-10">
       <div className="px-3 py-2 text-xs text-gray-500 border-b border-gray-100">
-        💬 针对「{scopeDisplayText}」可以：
+        针对「{scopeDisplayText}」可用的命令：
       </div>
       <div className="py-1">
-        {agents.map(agent => (
+        {filteredAgents.map(agent => (
           <button
             key={agent.id}
             onClick={() => onSelect(agent)}
@@ -27,7 +30,6 @@ export function AgentMenu({ agents, scopeDisplayText, onSelect }: AgentMenuProps
           </button>
         ))}
       </div>
-      <div className="px-3 py-2 text-xs text-gray-500 border-t border-gray-100">💭 或输入自定义指令</div>
     </div>
   )
 }
