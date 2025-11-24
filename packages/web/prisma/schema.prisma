@@ -9,3 +9,13 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Template {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  thumbnail   String?
+  content     String   // Handlebars template content
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

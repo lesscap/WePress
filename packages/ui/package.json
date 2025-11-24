@@ -17,6 +17,7 @@
   "dependencies": {
     "@wepress/agent-query": "workspace:*",
     "clsx": "^2.1.1",
+    "handlebars": "^4.7.8",
     "lucide-react": "^0.544.0",
     "marked": "^17.0.0",
     "react": "^19.2.0",

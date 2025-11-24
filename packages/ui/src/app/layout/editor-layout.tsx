@@ -44,7 +44,7 @@ export function EditorLayout() {
       <ResizablePanelGroup direction="horizontal" className="flex-1" autoSaveId="editor-layout">
         {/* Left: Preview Panel */}
         <ResizablePanel defaultSize={25} minSize={15}>
-          <PreviewPanel />
+          <PreviewPanel sections={sections} />
         </ResizablePanel>
 
         <ResizableHandle />

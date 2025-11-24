@@ -1,19 +1,38 @@
+import { useState, useEffect } from 'react'
 import { ChevronDown, ChevronUp } from 'lucide-react'
+import type { Template, TemplateListItem } from '@/types/template'
 
 type TemplateSelectorProps = {
   isOpen: boolean
   onToggle: () => void
+  selectedTemplate: Template | null
+  onSelectTemplate: (template: Template | null) => void
 }
 
-const templates = [
-  { id: '1', name: '简约风' },
-  { id: '2', name: '科技风' },
-  { id: '3', name: '文艺风' },
-  { id: '4', name: '商务风' },
-  { id: '5', name: '清新风' },
-]
+export function TemplateSelector({ isOpen, onToggle, selectedTemplate, onSelectTemplate }: TemplateSelectorProps) {
+  const [templates, setTemplates] = useState<TemplateListItem[]>([])
+  const [loading, setLoading] = useState(true)
 
-export function TemplateSelector({ isOpen, onToggle }: TemplateSelectorProps) {
+  useEffect(() => {
+    fetch('/api/templates')
+      .then(res => res.json())
+      .then((data: TemplateListItem[]) => {
+        setTemplates(data)
+        setLoading(false)
+      })
+      .catch(() => setLoading(false))
+  }, [])
+
+  const handleSelect = async (item: TemplateListItem) => {
+    if (selectedTemplate?.id === item.id) {
+      onSelectTemplate(null)
+      return
+    }
+    const res = await fetch(`/api/templates/${encodeURIComponent(item.id)}`)
+    const template: Template = await res.json()
+    onSelectTemplate(template)
+  }
+
   return (
     <div className="border-t border-gray-200 bg-white p-4">
       <div className="flex items-center justify-between mb-3">
@@ -23,41 +42,31 @@ export function TemplateSelector({ isOpen, onToggle }: TemplateSelectorProps) {
         </button>
       </div>
       {isOpen && (
-        <>
-          <div className="grid grid-cols-5 gap-2 mb-3">
-            {templates.map(template => (
+        <div className="grid grid-cols-5 gap-2">
+          {loading ? (
+            <div className="col-span-5 text-center text-xs text-gray-400 py-4">加载中...</div>
+          ) : (
+            templates.map(template => (
               <button
                 key={template.id}
                 type="button"
-                className="w-full rounded-lg border border-gray-300 bg-white hover:bg-gray-50 overflow-hidden"
+                onClick={() => handleSelect(template)}
+                className={`w-full rounded-lg border overflow-hidden transition-all ${
+                  selectedTemplate?.id === template.id
+                    ? 'border-blue-500 ring-2 ring-blue-200'
+                    : 'border-gray-300 hover:border-gray-400'
+                }`}
               >
-                <div className="h-20 bg-gray-100 flex items-center justify-center">
-                  <span className="text-xs text-gray-400">缩略图</span>
+                <div className="h-16 bg-gray-100 flex items-center justify-center">
+                  <span className="text-xs text-gray-400">
+                    {template.thumbnail ? <img src={template.thumbnail} alt="" className="h-full w-full object-cover" /> : '预览'}
+                  </span>
                 </div>
-                <div className="py-1.5 text-xs text-center">{template.name}</div>
+                <div className="py-1.5 text-xs text-center truncate px-1">{template.name}</div>
               </button>
-            ))}
-          </div>
-          <div className="flex justify-end">
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                className="px-2 py-1 text-xs text-gray-500 hover:text-gray-700 disabled:opacity-50"
-                disabled
-              >
-                上一页
-              </button>
-              <span className="text-xs text-gray-500">1/1</span>
-              <button
-                type="button"
-                className="px-2 py-1 text-xs text-gray-500 hover:text-gray-700 disabled:opacity-50"
-                disabled
-              >
-                下一页
-              </button>
-            </div>
-          </div>
-        </>
+            ))
+          )}
+        </div>
       )}
     </div>
   )
