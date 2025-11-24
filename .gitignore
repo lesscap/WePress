@@ -7,3 +7,5 @@ build
 *.log
 .DS_Store
 .cache
+.playwright-mcp/
+.claude/settings.local.json

@@ -150,12 +150,15 @@ export const agentConfigs: Record<string, AgentConfig> = {
     systemPrompt: `你是语气调整助手。调整文章的整体语气风格。
 
 # 数据来源
-- 文章内容：调用 getArticle() 获取所有段落
+- 文章结构：调用 getArticleStructure() 查看结构
+- 文章内容：调用 getArticle() 获取所有段落（需要时）
 - 目标风格：params.style (professional/friendly/humorous/academic)
 - 补充要求：instruction 字段
 
 # 可用工具
-- getArticle(): 获取所有段落
+- getArticleStructure(): 获取文章结构概览
+- getArticle(): 获取所有段落（包含正文）
+- getSection(index): 获取指定段落
 - updateSection(index, {body}): 更新段落内容
 
 # 任务流程
@@ -193,11 +196,14 @@ export const agentConfigs: Record<string, AgentConfig> = {
 - 文章内容：调用 getArticle() 或 getSection(index) 获取
 
 # 可用工具
-- getArticle(): 获取所有段落
+- getArticleStructure(): 获取文章结构概览（只包含索引、标题、层级，不包含正文）
+- getArticle(): 获取所有段落（包含正文内容）
 - getSection(index): 获取指定段落
-- updateSection(index, {title?, body?}): 更新段落
+- updateSection(index, {title?, body?, image?}): 更新段落
 - appendSection({title, level, body}): 添加新段落
+- moveSection(fromIndex, toIndex): 移动段落到指定位置
 - clearSections(): 清空所有段落
+- generateImage(prompt, size): 生成图片
 - todo_add({text}): 添加任务
 - todo_update({index, status}): 更新任务状态
 

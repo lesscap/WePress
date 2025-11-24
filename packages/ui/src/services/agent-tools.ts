@@ -56,11 +56,33 @@ export const AGENT_TOOLS: ToolDefinition[] = [
   },
 
   {
-    name: 'getArticle',
-    description: '获取完整文章内容（所有段落）',
+    name: 'getArticleStructure',
+    description: '获取文章结构概览（不包含正文内容，用于了解文章组织和重排）',
     parameters: {
       type: 'object',
       properties: {},
+    },
+  },
+
+  {
+    name: 'getArticle',
+    description: '获取完整文章内容（所有段落，包含正文）',
+    parameters: {
+      type: 'object',
+      properties: {},
+    },
+  },
+
+  {
+    name: 'moveSection',
+    description: '移动段落到指定位置',
+    parameters: {
+      type: 'object',
+      properties: {
+        fromIndex: { type: 'number', description: '源索引（从0开始）' },
+        toIndex: { type: 'number', description: '目标索引' },
+      },
+      required: ['fromIndex', 'toIndex'],
     },
   },
 
@@ -178,6 +200,16 @@ export function createToolExecutor(context: {
       return { result: `已更新段落：${title || section.title}` }
     },
 
+    getArticleStructure: async () => {
+      const structure = context.sections.map((s, i) => ({
+        index: i,
+        title: s.title,
+        level: s.level,
+      }))
+
+      return { result: structure }
+    },
+
     getArticle: async () => {
       const content = context.sections.map((s, i) => ({
         index: i,
@@ -188,6 +220,36 @@ export function createToolExecutor(context: {
       }))
 
       return { result: content }
+    },
+
+    moveSection: async args => {
+      const { fromIndex, toIndex } = args as {
+        fromIndex: number
+        toIndex: number
+      }
+
+      if (fromIndex < 0 || fromIndex >= context.sections.length) {
+        return { error: `源索引 ${fromIndex} 超出范围` }
+      }
+
+      if (toIndex < 0 || toIndex >= context.sections.length) {
+        return { error: `目标索引 ${toIndex} 超出范围` }
+      }
+
+      if (fromIndex === toIndex) {
+        return { result: '源位置和目标位置相同，无需移动' }
+      }
+
+      const movedTitle = context.sections[fromIndex].title
+
+      context.setSections(prev => {
+        const newSections = [...prev]
+        const [movedSection] = newSections.splice(fromIndex, 1)
+        newSections.splice(toIndex, 0, movedSection)
+        return newSections
+      })
+
+      return { result: `已将"${movedTitle}"从位置 ${fromIndex} 移动到 ${toIndex}` }
     },
 
     getSelectedText: async () => {
