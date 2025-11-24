@@ -1,6 +1,7 @@
 import type { Dispatch, SetStateAction } from 'react'
 import { SectionBlock } from './section-block'
 import type { EditorSelection, Section } from '@/types/editor'
+import type { ParseResult } from '@/utils/markdown-parser'
 
 type ArticleEditorProps = {
   selection: EditorSelection
@@ -9,8 +10,31 @@ type ArticleEditorProps = {
   setSections: Dispatch<SetStateAction<Section[]>>
 }
 
-export function ArticleEditor({ selection, onSelectionChange, sections }: ArticleEditorProps) {
+export function ArticleEditor({ selection, onSelectionChange, sections, setSections }: ArticleEditorProps) {
   const handlePageClick = () => {
+    onSelectionChange({ type: 'none' })
+  }
+
+  const handleSectionUpdate = (index: number, result: ParseResult) => {
+    setSections(prev => {
+      const updated = [...prev]
+
+      // If orphan content exists, merge to previous section
+      if (result.orphanContent && index > 0) {
+        const prevSection = updated[index - 1]
+        updated[index - 1] = {
+          ...prevSection,
+          body: prevSection.body + '\n\n' + result.orphanContent,
+        }
+        // Remove current section
+        updated.splice(index, 1)
+      } else {
+        // Replace with new sections
+        updated.splice(index, 1, ...result.sections)
+      }
+
+      return updated
+    })
     onSelectionChange({ type: 'none' })
   }
 
@@ -33,6 +57,7 @@ export function ArticleEditor({ selection, onSelectionChange, sections }: Articl
                   sectionTitle: section.title,
                 })
               }
+              onUpdate={newSections => handleSectionUpdate(index, newSections)}
             />
           ))}
         </div>
