@@ -3,10 +3,12 @@ import { cn } from '@/lib/utils'
 import type { Section } from '@/types/editor'
 import { Marked } from '@/components/marked'
 import { parseMarkdownToSections, sectionToMarkdown, type ParseResult } from '@/utils/markdown-parser'
+import type { ViewMode } from './index'
 
 type SectionBlockProps = {
   section: Section
   index: number
+  viewMode: ViewMode
   isSelected: boolean
   onSelect: () => void
   onUpdate: (result: ParseResult) => void
@@ -22,12 +24,13 @@ const indentClass: Record<number, string> = {
   6: 'ml-24',
 }
 
-export function SectionBlock({ section, index, isSelected, onSelect, onUpdate }: SectionBlockProps) {
+export function SectionBlock({ section, index, viewMode, isSelected, onSelect, onUpdate }: SectionBlockProps) {
   const [editMarkdown, setEditMarkdown] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const HeadingTag = `h${section.level}` as const
   const indent = indentClass[section.level] || 'ml-0'
+  const isOutline = viewMode === 'outline'
 
   useEffect(() => {
     if (isSelected) {
@@ -65,6 +68,32 @@ export function SectionBlock({ section, index, isSelected, onSelect, onUpdate }:
     )
   }
 
+  // Outline mode: compact title only
+  if (isOutline) {
+    return (
+      <div
+        className={cn(
+          'group py-1 px-2 rounded cursor-pointer transition-colors',
+          'hover:bg-gray-100',
+          indent,
+        )}
+        onClick={handleClick}
+      >
+        <span
+          className={cn(
+            'text-gray-700',
+            section.level === 1 && 'font-semibold',
+            section.level === 2 && 'font-medium',
+            section.level >= 3 && 'text-gray-600',
+          )}
+        >
+          {section.title}
+        </span>
+      </div>
+    )
+  }
+
+  // Detail mode: full content
   return (
     <div
       className={cn(
@@ -90,7 +119,6 @@ export function SectionBlock({ section, index, isSelected, onSelect, onUpdate }:
       </div>
       {section.image && (
         <div className="mt-4">
-          <label className="mb-2 block text-xs font-medium text-gray-500">配图</label>
           <div className="flex justify-center">
             <img
               src={section.image}

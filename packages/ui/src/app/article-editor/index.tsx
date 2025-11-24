@@ -1,7 +1,11 @@
-import type { Dispatch, SetStateAction } from 'react'
+import { useState, type Dispatch, type SetStateAction } from 'react'
+import { List, FileText } from 'lucide-react'
 import { SectionBlock } from './section-block'
 import type { EditorSelection, Section } from '@/types/editor'
 import type { ParseResult } from '@/utils/markdown-parser'
+import { cn } from '@/lib/utils'
+
+export type ViewMode = 'outline' | 'detail'
 
 type ArticleEditorProps = {
   selection: EditorSelection
@@ -11,6 +15,8 @@ type ArticleEditorProps = {
 }
 
 export function ArticleEditor({ selection, onSelectionChange, sections, setSections }: ArticleEditorProps) {
+  const [viewMode, setViewMode] = useState<ViewMode>('detail')
+
   const handlePageClick = () => {
     onSelectionChange({ type: 'none' })
   }
@@ -40,14 +46,43 @@ export function ArticleEditor({ selection, onSelectionChange, sections, setSecti
 
   return (
     <div className="flex h-full flex-col bg-white">
-      {/* Clickable padding area for selecting "全文" */}
+      {/* View mode toggle */}
+      <div className="flex items-center justify-end gap-1 px-4 py-2 border-b border-gray-100">
+        <button
+          type="button"
+          onClick={() => setViewMode('outline')}
+          className={cn(
+            'flex items-center gap-1 px-2 py-1 text-xs rounded transition-colors',
+            viewMode === 'outline' ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:bg-gray-100',
+          )}
+          title="大纲视图"
+        >
+          <List className="h-3.5 w-3.5" />
+          <span>大纲</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setViewMode('detail')}
+          className={cn(
+            'flex items-center gap-1 px-2 py-1 text-xs rounded transition-colors',
+            viewMode === 'detail' ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:bg-gray-100',
+          )}
+          title="详情视图"
+        >
+          <FileText className="h-3.5 w-3.5" />
+          <span>详情</span>
+        </button>
+      </div>
+
+      {/* Content area */}
       <div className="flex-1 overflow-y-auto p-8 cursor-default" onClick={handlePageClick}>
-        <div className="space-y-4">
+        <div className={cn('space-y-4', viewMode === 'outline' && 'space-y-1')}>
           {sections.map((section, index) => (
             <SectionBlock
               key={section.id}
               section={section}
               index={index}
+              viewMode={viewMode}
               isSelected={selection.type === 'section' && selection.sectionIndex === index}
               onSelect={() =>
                 onSelectionChange({
