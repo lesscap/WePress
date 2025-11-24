@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import type { Template, TemplateListItem } from '@/types/template'
+
+const STORAGE_KEY = 'wepress:selected-template-id'
 
 type TemplateSelectorProps = {
   isOpen: boolean
@@ -13,6 +15,14 @@ export function TemplateSelector({ isOpen, onToggle, selectedTemplate, onSelectT
   const [templates, setTemplates] = useState<TemplateListItem[]>([])
   const [loading, setLoading] = useState(true)
 
+  const selectById = useCallback(async (id: string) => {
+    const res = await fetch(`/api/templates/${encodeURIComponent(id)}`)
+    const template: Template = await res.json()
+    onSelectTemplate(template)
+    localStorage.setItem(STORAGE_KEY, id)
+  }, [onSelectTemplate])
+
+  // Load template list
   useEffect(() => {
     fetch('/api/templates')
       .then(res => res.json())
@@ -23,14 +33,21 @@ export function TemplateSelector({ isOpen, onToggle, selectedTemplate, onSelectT
       .catch(() => setLoading(false))
   }, [])
 
-  const handleSelect = async (item: TemplateListItem) => {
+  // Restore saved template selection
+  useEffect(() => {
+    const savedId = localStorage.getItem(STORAGE_KEY)
+    if (savedId) {
+      selectById(savedId).catch(() => localStorage.removeItem(STORAGE_KEY))
+    }
+  }, [selectById])
+
+  const handleSelect = (item: TemplateListItem) => {
     if (selectedTemplate?.id === item.id) {
       onSelectTemplate(null)
+      localStorage.removeItem(STORAGE_KEY)
       return
     }
-    const res = await fetch(`/api/templates/${encodeURIComponent(item.id)}`)
-    const template: Template = await res.json()
-    onSelectTemplate(template)
+    selectById(item.id)
   }
 
   return (

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { cn } from '@/lib/utils'
 import type { Section } from '@/types/editor'
 import { Marked } from '@/components/marked'
-import { sectionToMarkdown, type ParseResult } from '@/utils/markdown-parser'
+import { parseMarkdownToSections, sectionToMarkdown, type ParseResult } from '@/utils/markdown-parser'
 
 type SectionBlockProps = {
   section: Section
@@ -62,25 +62,19 @@ export function SectionBlock({ section, index, isSelected, onSelect, onUpdate }:
       )}
       onClick={handleClick}
     >
-      <div className="mb-3">
-        <label className="mb-1 block text-xs font-medium text-gray-500">标题 (H{section.level})</label>
-        <HeadingTag
-          className={cn(
-            'font-medium',
-            section.level === 1 && 'text-2xl',
-            section.level === 2 && 'text-xl',
-            section.level === 3 && 'text-lg',
-            section.level >= 4 && 'text-base',
-          )}
-        >
-          {section.title}
-        </HeadingTag>
-      </div>
-      <div>
-        <label className="mb-1 block text-xs font-medium text-gray-500">正文</label>
-        <div className="prose prose-sm max-w-none">
-          <Marked content={section.body} />
-        </div>
+      <HeadingTag
+        className={cn(
+          'font-medium mb-3',
+          section.level === 1 && 'text-2xl',
+          section.level === 2 && 'text-xl',
+          section.level === 3 && 'text-lg',
+          section.level >= 4 && 'text-base',
+        )}
+      >
+        {section.title}
+      </HeadingTag>
+      <div className="prose prose-sm max-w-none">
+        <Marked content={section.body} />
       </div>
       {section.image && (
         <div className="mt-4">
