@@ -47,12 +47,12 @@ export function ConfigForm({
 
       {/* Additional Requirements */}
       <div className="mb-3">
-        <input
-          type="text"
+        <textarea
           value={additionalRequirements}
           onChange={e => onAdditionalRequirementsChange(e.target.value)}
           placeholder={agent.placeholder || '补充要求（可选）...'}
-          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          rows={3}
+          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
         />
       </div>
 
