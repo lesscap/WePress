@@ -14,27 +14,39 @@ type DetailViewProps = {
 }
 
 export function DetailView({ sections, selection, onSelectionChange, onSectionUpdate }: DetailViewProps) {
-  const handleSelect = (index: number, section: Section) => {
+  const [editingIndex, setEditingIndex] = useState<number | null>(null)
+
+  const handleClick = (index: number, section: Section) => {
+    // Select this section for LLM operations
     onSelectionChange({
       type: 'section',
       sectionIndex: index,
       sectionId: section.id,
       sectionTitle: section.title,
     })
+    // Enter edit mode
+    setEditingIndex(index)
+  }
+
+  const handleEditDone = (index: number, result: ParseResult) => {
+    onSectionUpdate(index, result)
+    setEditingIndex(null)
   }
 
   return (
     <div className="space-y-4">
       {sections.map((section, index) => {
         const isSelected = selection.type === 'section' && selection.sectionIndex === index
+        const isEditing = editingIndex === index
 
         return (
           <SectionItem
             key={section.id}
             section={section}
             isSelected={isSelected}
-            onSelect={() => handleSelect(index, section)}
-            onUpdate={result => onSectionUpdate(index, result)}
+            isEditing={isEditing}
+            onClick={() => handleClick(index, section)}
+            onEditDone={result => handleEditDone(index, result)}
           />
         )
       })}
@@ -45,11 +57,12 @@ export function DetailView({ sections, selection, onSelectionChange, onSectionUp
 type SectionItemProps = {
   section: Section
   isSelected: boolean
-  onSelect: () => void
-  onUpdate: (result: ParseResult) => void
+  isEditing: boolean
+  onClick: () => void
+  onEditDone: (result: ParseResult) => void
 }
 
-function SectionItem({ section, isSelected, onSelect, onUpdate }: SectionItemProps) {
+function SectionItem({ section, isSelected, isEditing, onClick, onEditDone }: SectionItemProps) {
   const [editMarkdown, setEditMarkdown] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -57,24 +70,24 @@ function SectionItem({ section, isSelected, onSelect, onUpdate }: SectionItemPro
   const indent = getIndent(section.level)
 
   useEffect(() => {
-    if (isSelected) {
+    if (isEditing) {
       setEditMarkdown(sectionToMarkdown(section))
       setTimeout(() => textareaRef.current?.focus(), 0)
     }
-  }, [isSelected, section])
+  }, [isEditing, section])
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    onSelect()
+    onClick()
   }
 
   const handleBlur = () => {
     const result = parseMarkdownToSections(editMarkdown)
-    onUpdate(result)
+    onEditDone(result)
   }
 
   // Edit mode
-  if (isSelected) {
+  if (isEditing) {
     return (
       <div className={cn('rounded-lg border border-blue-500 bg-blue-50 p-4', indent)} onClick={e => e.stopPropagation()}>
         <label className="mb-2 block text-xs font-medium text-gray-700">
@@ -93,12 +106,12 @@ function SectionItem({ section, isSelected, onSelect, onUpdate }: SectionItemPro
     )
   }
 
-  // Display mode
+  // Display mode (with selection highlight)
   return (
     <div
       className={cn(
         'group rounded-lg border p-4 transition-all cursor-pointer',
-        'border-gray-200 hover:border-gray-300 hover:bg-gray-50',
+        isSelected ? 'border-blue-400 bg-blue-50' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50',
         indent,
       )}
       onClick={handleClick}

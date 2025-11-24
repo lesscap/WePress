@@ -40,7 +40,7 @@ export function ArticleEditor({ selection, onSelectionChange, sections, setSecti
 
       return updated
     })
-    onSelectionChange({ type: 'none' })
+    // Don't change selection - keep the section selected after edit
   }
 
   const handleMoveSection = (fromIndex: number, toIndex: number) => {
