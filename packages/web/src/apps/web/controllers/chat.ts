@@ -75,7 +75,7 @@ export const ChatController = (app: FastifyInstance) => {
 
       if (!response.ok) {
         const errorText = await response.text()
-        app.log.error('DashScope API error:', response.status, errorText)
+        app.log.error(`DashScope API error: ${response.status} ${errorText}`)
         return reply.code(response.status).send({
           error: {
             message: `DashScope API error: ${response.status}`,

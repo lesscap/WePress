@@ -100,6 +100,9 @@ importers:
       '@fastify/cookie':
         specifier: ^11.0.2
         version: 11.0.2
+      '@fastify/static':
+        specifier: ^8.3.0
+        version: 8.3.0
       '@fastify/swagger':
         specifier: ^9.6.1
         version: 9.6.1

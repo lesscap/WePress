@@ -1,3 +1,6 @@
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import type { FastifyInstance } from 'fastify'
 
 type GenerateImageBody = {
@@ -6,7 +9,27 @@ type GenerateImageBody = {
   negativePrompt?: string
 }
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const UPLOADS_DIR = path.join(__dirname, '../../../../uploads')
 const DASHSCOPE_IMAGE_API = 'https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation'
+
+// Ensure uploads directory exists
+if (!fs.existsSync(UPLOADS_DIR)) {
+  fs.mkdirSync(UPLOADS_DIR, { recursive: true })
+}
+
+async function downloadImage(url: string, filename: string): Promise<string> {
+  const response = await fetch(url)
+  if (!response.ok) {
+    throw new Error(`Failed to download image: ${response.status}`)
+  }
+
+  const buffer = Buffer.from(await response.arrayBuffer())
+  const filepath = path.join(UPLOADS_DIR, filename)
+  fs.writeFileSync(filepath, buffer)
+
+  return `/uploads/${filename}`
+}
 
 const GenerateImageSchema = {
   summary: 'Generate image from text prompt',
@@ -64,7 +87,7 @@ export const ImageController = (app: FastifyInstance) => {
 
       if (!response.ok) {
         const errorText = await response.text()
-        app.log.error('DashScope Image API error:', response.status, errorText)
+        app.log.error(`DashScope Image API error: ${response.status} ${errorText}`)
         return reply.code(response.status).send({
           error: {
             message: `DashScope API error: ${response.status}`,
@@ -76,9 +99,9 @@ export const ImageController = (app: FastifyInstance) => {
       const data = await response.json()
 
       // Extract image URL from response
-      const imageUrl = data.output?.choices?.[0]?.message?.content?.[0]?.image
+      const remoteImageUrl = data.output?.choices?.[0]?.message?.content?.[0]?.image
 
-      if (!imageUrl) {
+      if (!remoteImageUrl) {
         return reply.code(500).send({
           error: {
             message: 'No image URL in response',
@@ -87,9 +110,13 @@ export const ImageController = (app: FastifyInstance) => {
         })
       }
 
+      // Download and save image locally
+      const filename = `img-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.png`
+      const localUrl = await downloadImage(remoteImageUrl, filename)
+
       return reply.send({
         success: true,
-        image: imageUrl,
+        image: localUrl,
       })
     } catch (error) {
       app.log.error(error)
